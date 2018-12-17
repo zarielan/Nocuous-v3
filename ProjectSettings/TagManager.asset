@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BG Elements
+    uniqueID: 3215874065
+    locked: 0
+  - name: Entities
+    uniqueID: 1294135509
+    locked: 0
+  - name: FG Elements
+    uniqueID: 3218700519
+    locked: 0
+  - name: Walls
+    uniqueID: 3439198659
+    locked: 0

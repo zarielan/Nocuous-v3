@@ -230,4 +230,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 836b44a6d66e3fd4daed2333e9129cf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PF_Room: {fileID: 1795949106033814, guid: b81f761fd50f0f845804d0230c962e91, type: 2}
   levelFile: Level1.txt

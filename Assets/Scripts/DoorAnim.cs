@@ -30,7 +30,7 @@ public class DoorAnim : MonoBehaviour
             Destroy(this.gameObject);
 
         if (reverse)
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, 0f, 0), Time.deltaTime * 10f);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, 0f, 0), Time.deltaTime * 8f);
         else
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0f, 0f, 180 * clockwise), 60f);
     }

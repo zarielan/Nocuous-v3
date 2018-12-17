@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
 
     private Direction currentDirection;
 
-    private const float SPEED = 30f;
+    private const float SPEED = 25f;
 
     private Vector3 newPosition;
     private Vector3 vel;

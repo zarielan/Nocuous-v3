@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     private Vector3 newPosition;
     private Vector3 vel;
     private Quaternion newRotation;
+    private LevelScript level;
 
     private bool isMoving = false;
 
@@ -109,6 +110,13 @@ public class Player : MonoBehaviour
                 Door.transform.position = new Vector3((int)Math.Round(transform.position.x, 0) - 0.25f, (int)Math.Round(transform.position.y, 0) + y / 2, 0);
                 Door.SendMessage("Clockwise", y < 1);
             }
+
+            level.OnTurn();
         }
+    }
+
+    public void SetLevelInstance(LevelScript lvlscr)
+    {
+        level = lvlscr;
     }
 }

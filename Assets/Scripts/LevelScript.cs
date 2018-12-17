@@ -48,31 +48,23 @@ public class LevelScript : MonoBehaviour
                 var type = levelData[y][x];
                 if (type == 'F')
                 {
-                    GameObject Fire = Instantiate(PF_Fire, roomPosition, NO_ROTATION);
-                    Fire.transform.parent = Room.transform;
+                    CreateElementInRoom(PF_Fire, Room);
                 }
                 else if (type == 'G')
                 {
-                    GameObject Gas = Instantiate(PF_Gas, roomPosition, NO_ROTATION);
-                    Gas.transform.parent = Room.transform;
+                    CreateElementInRoom(PF_Gas, Room);
                 }
                 else if (type == 'H')
                 {
-                    GameObject Hole = Instantiate(PF_Hole, roomPosition, NO_ROTATION);
-                    Hole.transform.parent = Room.transform;
+                    CreateElementInRoom(PF_Hole, Room);
                 }
             }
         }
 
         Player = Instantiate(PF_Player, new Vector3(0, UPPER_BOUND - 1, 0), NO_ROTATION);
+        Player.SendMessage("SetLevelInstance", this);
         Camera = Instantiate(PF_Camera, Player.transform.position, NO_ROTATION);
         Camera.SendMessage("SetPlayer", Player);
-	}
-	
-	// Update is called once per frame
-	void Update()
-    {
-		
 	}
 
     private string[] readFile(string file)
@@ -85,5 +77,156 @@ public class LevelScript : MonoBehaviour
         print(levelWidth + "," + levelHeight);
 
         return lines;
+    }
+
+    public void OnTurn()
+    {
+        // 50% Chance of spreading
+        if (UnityEngine.Random.Range(0, 2) == 1)
+        {
+            // Hashset that will contain places we'll put gas on. To prevent duplicates.
+            var addGas = new HashSet<GameObject>();
+            // For fire
+            var addFire = new HashSet<GameObject>();
+
+            // Iterate through all rooms to find gases or fire
+            foreach (var r in Rooms)
+            {
+                // Check for each room's children
+                Transform roomTransform = r.Value.transform;
+                foreach (Transform t in roomTransform)
+                {
+                    // If the room has gas in it
+                    if (t.name == PF_Gas.name + "(Clone)")
+                    {
+                        // Find a neighbor.
+                        var possibleNeighbors = GetRoomNeighbors(r.Key);
+                        int index = UnityEngine.Random.Range(0, possibleNeighbors.Count);
+                        Vector3 next = possibleNeighbors[index];
+
+                        GameObject Room = Rooms[next];
+                        Transform roomChildren = Room.transform;
+                        bool hasGas = false;
+
+                        // Check if that neighbor has no gas in it
+                        foreach (Transform c in roomChildren)
+                        {
+                            if (c.name == PF_Gas.name + "(Clone)")
+                            {
+                                hasGas = true;
+                                break;
+                            }
+                        }
+
+                        // If it doesn't, spread gas there!
+                        if (!hasGas)
+                            addGas.Add(Room);
+                    }
+                    // If the room has fire in it
+                    else if (t.name == PF_Fire.name + "(Clone)")
+                    {
+                        // Find a neighbor.
+                        var possibleNeighbors = GetRoomNeighbors(r.Key);
+                        int index = UnityEngine.Random.Range(0, possibleNeighbors.Count);
+                        Vector3 next = possibleNeighbors[index];
+
+                        GameObject Room = Rooms[next];
+                        Transform roomChildren = Room.transform;
+                        bool hasFire = false;
+
+                        // Check if that neighbor has no gas in it
+                        foreach (Transform c in roomChildren)
+                        {
+                            if (c.name == PF_Fire.name + "(Clone)")
+                            {
+                                hasFire = true;
+                                break;
+                            }
+                        }
+
+                        // If it doesn't, spread gas there!
+                        if (!hasFire)
+                            addFire.Add(Room);
+                    }
+                }
+            }
+
+            // Set gas to these rooms
+            addGas = new HashSet<GameObject>(addGas);
+            foreach (GameObject r in addGas)
+                CreateElementInRoom(PF_Gas, r);
+
+            // Set fire to these rooms
+            addFire = new HashSet<GameObject>(addFire);
+            foreach (GameObject r in addFire)
+                CreateElementInRoom(PF_Fire, r);
+
+            foreach (var r in Rooms)
+            {
+                bool hasGas = false;
+                bool hasFire = false;
+                bool hasHole = false;
+
+                // Check for each room's children
+                Transform roomTransform = r.Value.transform;
+                foreach (Transform t in roomTransform)
+                {
+                    if (t.name == PF_Gas.name + "(Clone)")
+                        hasGas = true;
+                    if (t.name == PF_Fire.name + "(Clone)")
+                        hasFire = true;
+                    if (t.name == PF_Hole.name + "(Clone)")
+                        hasHole = true;
+                }
+
+                // Gas and Fire
+                if (hasGas && hasFire && !hasHole)
+                {
+                    Destroy(r.Value.transform.Find(PF_Gas.name + "(Clone)").gameObject);
+                    Destroy(r.Value.transform.Find(PF_Fire.name + "(Clone)").gameObject);
+                    CreateElementInRoom(PF_Hole, r.Value);
+                    //TODO explode
+                }
+
+                // Hole and Fire
+                if (!hasGas && hasFire && hasHole)
+                {
+                    Destroy(r.Value.transform.Find(PF_Fire.name + "(Clone)").gameObject);
+                }
+
+                // All
+                if (hasGas && hasFire && hasHole)
+                {
+                    Destroy(r.Value.transform.Find(PF_Gas.name + "(Clone)").gameObject);
+                    Destroy(r.Value.transform.Find(PF_Fire.name + "(Clone)").gameObject);
+                    //TODO explode
+                }
+            }
+        }
+    }
+
+    private List<Vector3> GetRoomNeighbors(Vector3 Current)
+    {
+        float x = Current.x;
+        float y = Current.y;
+
+        List<Vector3> output = new List<Vector3>();
+
+        if (x + 2 <= UPPER_BOUND)
+            output.Add(new Vector3(x + 2, y));
+        if (x - 2 >= LOWER_BOUND)
+            output.Add(new Vector3(x - 2, y));
+        if (y + 2 <= UPPER_BOUND)
+            output.Add(new Vector3(x, y + 2));
+        if (y - 2 >= LOWER_BOUND)
+            output.Add(new Vector3(x, y - 2));
+
+        return output;
+    }
+
+    private void CreateElementInRoom(GameObject prefab, GameObject room)
+    {
+        GameObject elem = Instantiate(prefab, room.transform.position, NO_ROTATION);
+        elem.transform.parent = room.transform;
     }
 }

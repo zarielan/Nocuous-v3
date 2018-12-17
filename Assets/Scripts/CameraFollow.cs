@@ -4,20 +4,20 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    public GameObject player;
+    private GameObject player;
 
     private Vector3 velocity = Vector3.zero;
-    private float fixedZ;
-
-    private void Start()
-    {
-        fixedZ = transform.position.z;
-    }
+    private const float fixedZ = -10;
 
     void LateUpdate()
     {
-        Vector3 newPos = Vector3.SmoothDamp(transform.position, player.transform.position, ref velocity, 0.1f);
+        Vector3 newPos = Vector3.SmoothDamp(transform.position, player.transform.position, ref velocity, 0.3f);
         newPos.z = fixedZ;
         transform.position = newPos;
+    }
+
+    public void SetPlayer(GameObject Pl)
+    {
+        player = Pl;
     }
 }

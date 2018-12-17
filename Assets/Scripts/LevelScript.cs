@@ -11,6 +11,8 @@ public class LevelScript : MonoBehaviour
     public static int UPPER_BOUND = 7;
 
     public GameObject PF_Room;
+    public GameObject PF_Player;
+    public Camera PF_Camera;
 
     public string levelFile;
 
@@ -19,6 +21,8 @@ public class LevelScript : MonoBehaviour
     private int levelWidth = 0;
 
     private Dictionary<Vector3, GameObject> Rooms;
+    private GameObject Player;
+    private Camera Camera;
 
 	// Use this for initialization
 	void Start()
@@ -35,6 +39,10 @@ public class LevelScript : MonoBehaviour
                 Rooms.Add(Room.transform.position, Room);
             }
         }
+
+        Player = Instantiate(PF_Player, new Vector3(0, UPPER_BOUND - 1, 0), NO_ROTATION);
+        Camera = Instantiate(PF_Camera, Player.transform.position, NO_ROTATION);
+        Camera.SendMessage("SetPlayer", Player);
 	}
 	
 	// Update is called once per frame

@@ -89,10 +89,19 @@ public class Player : MonoBehaviour
         int newY = (int)Math.Round(transform.position.y, 0) + y;
 
         if (newX >= LevelScript.LOWER_BOUND && newX <= LevelScript.UPPER_BOUND && newY >= LevelScript.LOWER_BOUND && newY <= LevelScript.UPPER_BOUND && !isMoving)
-        {
-            /* Player Moves!! */
+        {            
+            var next = new Vector3(newX, newY, 0);
 
-            newPosition = new Vector3(newX, newY, 0);
+            // Check if it isn't a hole.
+            GameObject newRoom = level.GetRooms()[next];
+            foreach (Transform t in newRoom.transform)
+            {
+                if (t.name == level.GetHolePrefabName())
+                    return;
+            }
+
+            /* Player Moves!! */
+            newPosition = next;
 
             /* Door Animation */
 

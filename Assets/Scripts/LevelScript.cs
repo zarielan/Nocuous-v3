@@ -9,7 +9,7 @@ public class LevelScript : MonoBehaviour
     public static Quaternion NO_ROTATION = new Quaternion(0, 0, 0, 0);
     public static int LOWER_BOUND = 0;
     public static int UPPER_BOUND = 7;
-
+    
     public GameObject PF_Room;
     public GameObject PF_Player;
     public GameObject PF_Fire;
@@ -74,7 +74,6 @@ public class LevelScript : MonoBehaviour
         levelHeight = lines.Length;
         levelWidth = lines[0].Length;
         UPPER_BOUND = levelWidth * 2 - 1;
-        print(levelWidth + "," + levelHeight);
 
         return lines;
     }
@@ -161,6 +160,7 @@ public class LevelScript : MonoBehaviour
             foreach (GameObject r in addFire)
                 CreateElementInRoom(PF_Fire, r);
 
+            // If the room has two elements or more in it, when need to do something
             foreach (var r in Rooms)
             {
                 bool hasGas = false;
@@ -228,5 +228,15 @@ public class LevelScript : MonoBehaviour
     {
         GameObject elem = Instantiate(prefab, room.transform.position, NO_ROTATION);
         elem.transform.parent = room.transform;
+    }
+
+    public Dictionary<Vector3, GameObject> GetRooms()
+    {
+        return Rooms;
+    }
+
+    public string GetHolePrefabName()
+    {
+        return PF_Hole.name + "(Clone)";
     }
 }

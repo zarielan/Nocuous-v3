@@ -12,6 +12,9 @@ public class LevelScript : MonoBehaviour
 
     public GameObject PF_Room;
     public GameObject PF_Player;
+    public GameObject PF_Fire;
+    public GameObject PF_Gas;
+    public GameObject PF_Hole;
     public Camera PF_Camera;
 
     public string levelFile;
@@ -31,12 +34,33 @@ public class LevelScript : MonoBehaviour
 
         levelData = readFile(levelFile);
 
-        for (int y = 0; y < levelHeight * 2; y += 2)
+        for (int y = 0; y < levelHeight; y++)
         {
-            for (int x = 0; x < levelWidth * 2; x += 2)
+            for (int x = 0; x < levelWidth; x++)
             {
-                GameObject Room = Instantiate(PF_Room, new Vector3(x, y, 0), NO_ROTATION) as GameObject;
-                Rooms.Add(Room.transform.position, Room);
+                int roomX = x * 2;
+                int roomY = y * 2;
+                var roomPosition = new Vector3(roomX, roomY, 0);
+
+                GameObject Room = Instantiate(PF_Room, roomPosition, NO_ROTATION) as GameObject;
+                Rooms.Add(roomPosition, Room);
+
+                var type = levelData[y][x];
+                if (type == 'F')
+                {
+                    GameObject Fire = Instantiate(PF_Fire, roomPosition, NO_ROTATION);
+                    Fire.transform.parent = Room.transform;
+                }
+                else if (type == 'G')
+                {
+                    GameObject Gas = Instantiate(PF_Gas, roomPosition, NO_ROTATION);
+                    Gas.transform.parent = Room.transform;
+                }
+                else if (type == 'H')
+                {
+                    GameObject Hole = Instantiate(PF_Hole, roomPosition, NO_ROTATION);
+                    Hole.transform.parent = Room.transform;
+                }
             }
         }
 
@@ -54,6 +78,7 @@ public class LevelScript : MonoBehaviour
     private string[] readFile(string file)
     {
         string[] lines = System.IO.File.ReadAllLines("Assets/Levels/" + file);
+        Array.Reverse(lines);
         levelHeight = lines.Length;
         levelWidth = lines[0].Length;
         UPPER_BOUND = levelWidth * 2 - 1;

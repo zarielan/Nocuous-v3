@@ -155,5 +155,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PF_Room: {fileID: 1795949106033814, guid: b81f761fd50f0f845804d0230c962e91, type: 2}
   PF_Player: {fileID: 1969797480519386, guid: 50f16c80cda188841b66fa1e6db078b8, type: 2}
+  PF_Fire: {fileID: 1273851615842112, guid: 8c20eb970fd3aa04696e58f555ac7c0f, type: 2}
+  PF_Gas: {fileID: 1243976725738666, guid: 8639bca85418cc34d8b6d86c6492ee5f, type: 2}
+  PF_Hole: {fileID: 1685000293122596, guid: 18215947c93adce4e830b754b333c6e5, type: 2}
   PF_Camera: {fileID: 20133558330937034, guid: 81f2bc331f92a124d8b0f55e10751cf9, type: 2}
   levelFile: Level1.txt

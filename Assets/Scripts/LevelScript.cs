@@ -266,10 +266,13 @@ public class LevelScript : MonoBehaviour
     {
         var possibleRooms = new List<GameObject>();
 
+        // Check each room. If it's an empty room, or not the player's spawn point, then add it to the list of
+        // possible rooms to add items in.
         foreach (var r in Rooms)
         {
             bool add = true;
 
+            // Check the room's children if it has any element in it
             Transform children = r.Value.transform;
             foreach (Transform c in children)
             {
@@ -280,10 +283,16 @@ public class LevelScript : MonoBehaviour
                 }
             }
 
+            // Check if it's not the player's spawn point
+            if (r.Value.transform.position == new Vector3(0, UPPER_BOUND - 1, 0))
+                add = false;
+
+            // If the room is sound, we can put an item there            
             if (add)
                 possibleRooms.Add(r.Value);
         }
 
+        // Add the fire extinguisher in a random room. Remove that room when it's time to add the plank.
         int randomRoom = UnityEngine.Random.Range(0, possibleRooms.Count);
         CreateElementInRoom(PF_FireExtinguisher, possibleRooms[randomRoom]);
         possibleRooms.RemoveAt(randomRoom);
@@ -294,21 +303,25 @@ public class LevelScript : MonoBehaviour
 
     public void OnItemGet(GameObject item)
     {
+        // If the item is either a fire extinguisher or plank
+        // (Idk why I have to check it again, but for safety measures I guess...)
         if (item.name == GetPrefabName(PF_FireExtinguisher) || item.name == GetPrefabName(PF_Plank))
         {
+            // Add an image component to it, because the UI needs it
             Image img = item.AddComponent<Image>();
             img.sprite = item.GetComponent<SpriteRenderer>().sprite;
 
+            // Remove everything that made it an item
             Destroy(item.GetComponent<SpriteRenderer>());
             Destroy(item.GetComponent<CircleCollider2D>());
             Destroy(item.GetComponent<ItemWiggle>());
 
+            // Add it to the canvas
             item.transform.SetParent(UI_Canvas.transform);
             
+            // Notify set canvas
             UI_Canvas.SendMessage("OnAddChild", item);
         }
-
-        //Destroy(item);
     }
 
     public Dictionary<Vector3, GameObject> GetRooms()

@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ *  Just for the wiggle animation of each item
+ */ 
 public class ItemWiggle : MonoBehaviour
 {
     private float deltaTime = 0f;

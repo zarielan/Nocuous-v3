@@ -141,8 +141,12 @@ public class Player : MonoBehaviour
         level = lvlscr;
     }
 
+    /*
+     *  If the player has collided on something, and if it's an item, let the level handle it
+     */ 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        // Check if it's either the fire extinguisher or the plank
         if (collision.gameObject.name == level.GetPrefabName(level.PF_FireExtinguisher) || collision.gameObject.name == level.GetPrefabName(level.PF_Plank))
         {
             level.OnItemGet(collision.gameObject);

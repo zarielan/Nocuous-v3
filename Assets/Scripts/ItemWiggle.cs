@@ -8,7 +8,7 @@ public class ItemWiggle : MonoBehaviour
 
     private void Start()
     {
-        deltaTime = UnityEngine.Random.Range(0, 30);
+        deltaTime = Random.Range(0, 30);
     }
 
     private void Update()

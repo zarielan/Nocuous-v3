@@ -301,11 +301,14 @@ public class LevelScript : MonoBehaviour
 
             Destroy(item.GetComponent<SpriteRenderer>());
             Destroy(item.GetComponent<CircleCollider2D>());
+            Destroy(item.GetComponent<ItemWiggle>());
 
             item.transform.SetParent(UI_Canvas.transform);
             item.transform.position = new Vector3(0, 0, 0);
             item.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
             item.layer = 5;
+
+            UI_Canvas.SendMessage("OnAddChild", item);
         }
 
         //Destroy(item);

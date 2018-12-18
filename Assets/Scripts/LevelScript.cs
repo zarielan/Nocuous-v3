@@ -123,7 +123,7 @@ public class LevelScript : MonoBehaviour
                 foreach (Transform t in roomTransform)
                 {
                     // If the room has gas in it
-                    if (t.name == GetGasPrefabName())
+                    if (t.name == GetPrefabName(PF_Gas))
                     {
                         // Find a neighbor.
                         var possibleNeighbors = GetRoomNeighbors(r.Key);
@@ -137,7 +137,7 @@ public class LevelScript : MonoBehaviour
                         // Check if that neighbor has no gas in it
                         foreach (Transform c in roomChildren)
                         {
-                            if (c.name == GetGasPrefabName())
+                            if (c.name == GetPrefabName(PF_Gas))
                             {
                                 hasGas = true;
                                 break;
@@ -149,7 +149,7 @@ public class LevelScript : MonoBehaviour
                             addGas.Add(Room);
                     }
                     // If the room has fire in it
-                    else if (t.name == GetFirePrefabName())
+                    else if (t.name == GetPrefabName(PF_Fire))
                     {
                         // Find a neighbor.
                         var possibleNeighbors = GetRoomNeighbors(r.Key);
@@ -163,7 +163,7 @@ public class LevelScript : MonoBehaviour
                         // Check if that neighbor has no fire in it
                         foreach (Transform c in roomChildren)
                         {
-                            if (c.name == GetFirePrefabName())
+                            if (c.name == GetPrefabName(PF_Fire))
                             {
                                 hasFire = true;
                                 break;
@@ -198,19 +198,19 @@ public class LevelScript : MonoBehaviour
                 Transform roomTransform = r.Value.transform;
                 foreach (Transform t in roomTransform)
                 {
-                    if (t.name == GetGasPrefabName())
+                    if (t.name == GetPrefabName(PF_Gas))
                         hasGas = true;
-                    if (t.name == GetFirePrefabName())
+                    if (t.name == GetPrefabName(PF_Fire))
                         hasFire = true;
-                    if (t.name == GetHolePrefabName())
+                    if (t.name == GetPrefabName(PF_Hole))
                         hasHole = true;
                 }
 
                 // Gas and Fire
                 if (hasGas && hasFire && !hasHole)
                 {
-                    Destroy(r.Value.transform.Find(GetGasPrefabName()).gameObject);
-                    Destroy(r.Value.transform.Find(GetFirePrefabName()).gameObject);
+                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
+                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
                     CreateElementInRoom(PF_Hole, r.Value);
                     //TODO explode
                 }
@@ -218,14 +218,14 @@ public class LevelScript : MonoBehaviour
                 // Hole and Fire
                 if (!hasGas && hasFire && hasHole)
                 {
-                    Destroy(r.Value.transform.Find(GetFirePrefabName()).gameObject);
+                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
                 }
 
                 // All
                 if (hasGas && hasFire && hasHole)
                 {
-                    Destroy(r.Value.transform.Find(GetGasPrefabName()).gameObject);
-                    Destroy(r.Value.transform.Find(GetFirePrefabName()).gameObject);
+                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
+                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
                     //TODO explode
                 }
             }
@@ -271,7 +271,7 @@ public class LevelScript : MonoBehaviour
             Transform children = r.Value.transform;
             foreach (Transform c in children)
             {
-                if (c.name == GetHolePrefabName() || c.name == GetFirePrefabName() || c.name == GetGasPrefabName())
+                if (c.name == GetPrefabName(PF_Hole) || c.name == GetPrefabName(PF_Fire) || c.name == GetPrefabName(PF_Gas))
                 {
                     add = false;
                     break;
@@ -295,18 +295,8 @@ public class LevelScript : MonoBehaviour
         return Rooms;
     }
 
-    public string GetHolePrefabName()
+    public string GetPrefabName(GameObject prefab)
     {
-        return PF_Hole.name + "(Clone)";
-    }
-
-    public string GetFirePrefabName()
-    {
-        return PF_Fire.name + "(Clone)";
-    }
-
-    public string GetGasPrefabName()
-    {
-        return PF_Gas.name + "(Clone)";
+        return prefab.name + "(Clone)";
     }
 }

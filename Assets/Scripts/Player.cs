@@ -108,7 +108,7 @@ public class Player : MonoBehaviour
             GameObject newRoom = level.GetRooms()[next];
             foreach (Transform t in newRoom.transform)
             {
-                if (t.name == level.GetHolePrefabName())
+                if (t.name == level.GetPrefabName(level.PF_Hole))
                     return;
             }
 
@@ -139,5 +139,14 @@ public class Player : MonoBehaviour
     public void SetLevelInstance(LevelScript lvlscr)
     {
         level = lvlscr;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.name == level.GetPrefabName(level.PF_FireExtinguisher) || collision.gameObject.name == level.GetPrefabName(level.PF_Plank))
+        {
+            print("collided!");
+            Destroy(collision.gameObject);
+        }
     }
 }

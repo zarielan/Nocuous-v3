@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using System;
+using UnityEngine.UI;
 
 /* 
  *  The main script file when the level loads. Everything in the map is generated from this file.
@@ -27,6 +28,7 @@ public class LevelScript : MonoBehaviour
     public GameObject PF_Plank;
 
     public Camera PF_Camera;
+    public Canvas UI_Canvas;
 
     public TextAsset levelFile;
 
@@ -288,6 +290,25 @@ public class LevelScript : MonoBehaviour
 
         randomRoom = UnityEngine.Random.Range(0, possibleRooms.Count);
         CreateElementInRoom(PF_Plank, possibleRooms[randomRoom]);
+    }
+
+    public void OnItemGet(GameObject item)
+    {
+        if (item.name == GetPrefabName(PF_FireExtinguisher) || item.name == GetPrefabName(PF_Plank))
+        {
+            Image img = item.AddComponent<Image>();
+            img.sprite = item.GetComponent<SpriteRenderer>().sprite;
+
+            Destroy(item.GetComponent<SpriteRenderer>());
+            Destroy(item.GetComponent<CircleCollider2D>());
+
+            item.transform.SetParent(UI_Canvas.transform);
+            item.transform.position = new Vector3(0, 0, 0);
+            item.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+            item.layer = 5;
+        }
+
+        //Destroy(item);
     }
 
     public Dictionary<Vector3, GameObject> GetRooms()

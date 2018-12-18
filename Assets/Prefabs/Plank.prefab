@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4358045247313976}
   - component: {fileID: 212993865270226904}
   - component: {fileID: 58070833007968118}
+  - component: {fileID: 114631384918235950}
   m_Layer: 0
   m_Name: Plank
   m_TagString: Untagged
@@ -56,6 +57,17 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.25
+--- !u!114 &114631384918235950
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1016900011554552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb32ad08055899a4b936a09dc75e656f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212993865270226904
 SpriteRenderer:
   m_ObjectHideFlags: 1

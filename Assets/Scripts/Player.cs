@@ -145,8 +145,7 @@ public class Player : MonoBehaviour
     {
         if (collision.gameObject.name == level.GetPrefabName(level.PF_FireExtinguisher) || collision.gameObject.name == level.GetPrefabName(level.PF_Plank))
         {
-            print("collided!");
-            Destroy(collision.gameObject);
+            level.OnItemGet(collision.gameObject);
         }
     }
 }

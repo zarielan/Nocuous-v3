@@ -4,12 +4,20 @@ using UnityEngine;
 using System.Text.RegularExpressions;
 using System;
 
+/* 
+ *  The main script file when the level loads. Everything in the map is generated from this file.
+ */
 public class LevelScript : MonoBehaviour
 {
+    /* CONSTANTS */
     public static Quaternion NO_ROTATION = new Quaternion(0, 0, 0, 0);
+
+    // Defines the lowest and highest x and y coordinate in the level.
+    // TODO un-hardcode this
     public static int LOWER_BOUND = 0;
     public static int UPPER_BOUND = 7;
     
+    /* Game Objects (and other public stuff) */
     public GameObject PF_Room;
     public GameObject PF_Player;
     public GameObject PF_Fire;
@@ -19,6 +27,7 @@ public class LevelScript : MonoBehaviour
 
     public string levelFile;
 
+    /* Class variables */
     private string[] levelData;
     private int levelHeight = 0;
     private int levelWidth = 0;
@@ -27,13 +36,14 @@ public class LevelScript : MonoBehaviour
     private GameObject Player;
     private Camera Camera;
 
-	// Use this for initialization
-	void Start()
+    void Start()
     {
         Rooms = new Dictionary<Vector3, GameObject>();
 
         levelData = readFile(levelFile);
 
+        // Read the data from the map file and creates the rooms. 
+        // Also add the elements to each room (fire, gas, hole)
         for (int y = 0; y < levelHeight; y++)
         {
             for (int x = 0; x < levelWidth; x++)
@@ -61,15 +71,21 @@ public class LevelScript : MonoBehaviour
             }
         }
 
+        // Create the player
         Player = Instantiate(PF_Player, new Vector3(0, UPPER_BOUND - 1, 0), NO_ROTATION);
         Player.SendMessage("SetLevelInstance", this);
+
+        // Create the camera
         Camera = Instantiate(PF_Camera, Player.transform.position, NO_ROTATION);
         Camera.SendMessage("SetPlayer", Player);
-	}
+    }
 
     private string[] readFile(string file)
     {
         string[] lines = System.IO.File.ReadAllLines("Assets/Levels/" + file);
+
+        // The list is reversed because in the game, the y-axis points upwards, but we're
+        // reading the file from top to bottom
         Array.Reverse(lines);
         levelHeight = lines.Length;
         levelWidth = lines[0].Length;
@@ -78,9 +94,12 @@ public class LevelScript : MonoBehaviour
         return lines;
     }
 
+    /*
+     *  On each turn of the player, somethings can happen.
+     */
     public void OnTurn()
     {
-        // 50% Chance of spreading
+        // 50% Chance of spreading gas or fire.
         if (UnityEngine.Random.Range(0, 2) == 1)
         {
             // Hashset that will contain places we'll put gas on. To prevent duplicates.
@@ -96,7 +115,7 @@ public class LevelScript : MonoBehaviour
                 foreach (Transform t in roomTransform)
                 {
                     // If the room has gas in it
-                    if (t.name == PF_Gas.name + "(Clone)")
+                    if (t.name == GetGasPrefabName())
                     {
                         // Find a neighbor.
                         var possibleNeighbors = GetRoomNeighbors(r.Key);
@@ -110,7 +129,7 @@ public class LevelScript : MonoBehaviour
                         // Check if that neighbor has no gas in it
                         foreach (Transform c in roomChildren)
                         {
-                            if (c.name == PF_Gas.name + "(Clone)")
+                            if (c.name == GetGasPrefabName())
                             {
                                 hasGas = true;
                                 break;
@@ -122,7 +141,7 @@ public class LevelScript : MonoBehaviour
                             addGas.Add(Room);
                     }
                     // If the room has fire in it
-                    else if (t.name == PF_Fire.name + "(Clone)")
+                    else if (t.name == GetFirePrefabName())
                     {
                         // Find a neighbor.
                         var possibleNeighbors = GetRoomNeighbors(r.Key);
@@ -133,10 +152,10 @@ public class LevelScript : MonoBehaviour
                         Transform roomChildren = Room.transform;
                         bool hasFire = false;
 
-                        // Check if that neighbor has no gas in it
+                        // Check if that neighbor has no fire in it
                         foreach (Transform c in roomChildren)
                         {
-                            if (c.name == PF_Fire.name + "(Clone)")
+                            if (c.name == GetFirePrefabName())
                             {
                                 hasFire = true;
                                 break;
@@ -171,19 +190,19 @@ public class LevelScript : MonoBehaviour
                 Transform roomTransform = r.Value.transform;
                 foreach (Transform t in roomTransform)
                 {
-                    if (t.name == PF_Gas.name + "(Clone)")
+                    if (t.name == GetGasPrefabName())
                         hasGas = true;
-                    if (t.name == PF_Fire.name + "(Clone)")
+                    if (t.name == GetFirePrefabName())
                         hasFire = true;
-                    if (t.name == PF_Hole.name + "(Clone)")
+                    if (t.name == GetHolePrefabName())
                         hasHole = true;
                 }
 
                 // Gas and Fire
                 if (hasGas && hasFire && !hasHole)
                 {
-                    Destroy(r.Value.transform.Find(PF_Gas.name + "(Clone)").gameObject);
-                    Destroy(r.Value.transform.Find(PF_Fire.name + "(Clone)").gameObject);
+                    Destroy(r.Value.transform.Find(GetGasPrefabName()).gameObject);
+                    Destroy(r.Value.transform.Find(GetFirePrefabName()).gameObject);
                     CreateElementInRoom(PF_Hole, r.Value);
                     //TODO explode
                 }
@@ -191,14 +210,14 @@ public class LevelScript : MonoBehaviour
                 // Hole and Fire
                 if (!hasGas && hasFire && hasHole)
                 {
-                    Destroy(r.Value.transform.Find(PF_Fire.name + "(Clone)").gameObject);
+                    Destroy(r.Value.transform.Find(GetFirePrefabName()).gameObject);
                 }
 
                 // All
                 if (hasGas && hasFire && hasHole)
                 {
-                    Destroy(r.Value.transform.Find(PF_Gas.name + "(Clone)").gameObject);
-                    Destroy(r.Value.transform.Find(PF_Fire.name + "(Clone)").gameObject);
+                    Destroy(r.Value.transform.Find(GetGasPrefabName()).gameObject);
+                    Destroy(r.Value.transform.Find(GetFirePrefabName()).gameObject);
                     //TODO explode
                 }
             }
@@ -224,6 +243,9 @@ public class LevelScript : MonoBehaviour
         return output;
     }
 
+    /*
+     *  Add the element to the room specified, given the prefab.
+     */
     private void CreateElementInRoom(GameObject prefab, GameObject room)
     {
         GameObject elem = Instantiate(prefab, room.transform.position, NO_ROTATION);
@@ -238,5 +260,15 @@ public class LevelScript : MonoBehaviour
     public string GetHolePrefabName()
     {
         return PF_Hole.name + "(Clone)";
+    }
+
+    public string GetFirePrefabName()
+    {
+        return PF_Fire.name + "(Clone)";
+    }
+
+    public string GetGasPrefabName()
+    {
+        return PF_Gas.name + "(Clone)";
     }
 }

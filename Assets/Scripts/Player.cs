@@ -26,8 +26,8 @@ public class Player : MonoBehaviour
         currentDirection = Direction.DOWN;
         newPosition = transform.position;
     }
-	
-	void Update()
+    
+    void Update()
     {
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {

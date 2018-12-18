@@ -25,7 +25,7 @@ public class LevelScript : MonoBehaviour
     public GameObject PF_Hole;
     public Camera PF_Camera;
 
-    public string levelFile;
+    public TextAsset levelFile;
 
     /* Class variables */
     private string[] levelData;
@@ -80,9 +80,12 @@ public class LevelScript : MonoBehaviour
         Camera.SendMessage("SetPlayer", Player);
     }
 
-    private string[] readFile(string file)
+    private string[] readFile(TextAsset file)
     {
-        string[] lines = System.IO.File.ReadAllLines("Assets/Levels/" + file);
+        string[] lines = Regex.Split(file.text, Environment.NewLine);
+        
+        foreach (var l in lines)
+            print(l);
 
         // The list is reversed because in the game, the y-axis points upwards, but we're
         // reading the file from top to bottom

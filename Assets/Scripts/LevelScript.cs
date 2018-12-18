@@ -23,6 +23,9 @@ public class LevelScript : MonoBehaviour
     public GameObject PF_Fire;
     public GameObject PF_Gas;
     public GameObject PF_Hole;
+    public GameObject PF_FireExtinguisher;
+    public GameObject PF_Plank;
+
     public Camera PF_Camera;
 
     public TextAsset levelFile;
@@ -78,6 +81,8 @@ public class LevelScript : MonoBehaviour
         // Create the camera
         Camera = Instantiate(PF_Camera, Player.transform.position, NO_ROTATION);
         Camera.SendMessage("SetPlayer", Player);
+
+        AddItems();
     }
 
     private string[] readFile(TextAsset file)
@@ -253,6 +258,36 @@ public class LevelScript : MonoBehaviour
     {
         GameObject elem = Instantiate(prefab, room.transform.position, NO_ROTATION);
         elem.transform.parent = room.transform;
+    }
+
+    private void AddItems()
+    {
+        var possibleRooms = new List<GameObject>();
+
+        foreach (var r in Rooms)
+        {
+            bool add = true;
+
+            Transform children = r.Value.transform;
+            foreach (Transform c in children)
+            {
+                if (c.name == GetHolePrefabName() || c.name == GetFirePrefabName() || c.name == GetGasPrefabName())
+                {
+                    add = false;
+                    break;
+                }
+            }
+
+            if (add)
+                possibleRooms.Add(r.Value);
+        }
+
+        int randomRoom = UnityEngine.Random.Range(0, possibleRooms.Count);
+        CreateElementInRoom(PF_FireExtinguisher, possibleRooms[randomRoom]);
+        possibleRooms.RemoveAt(randomRoom);
+
+        randomRoom = UnityEngine.Random.Range(0, possibleRooms.Count);
+        CreateElementInRoom(PF_Plank, possibleRooms[randomRoom]);
     }
 
     public Dictionary<Vector3, GameObject> GetRooms()

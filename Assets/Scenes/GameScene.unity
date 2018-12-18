@@ -158,5 +158,8 @@ MonoBehaviour:
   PF_Fire: {fileID: 1273851615842112, guid: 8c20eb970fd3aa04696e58f555ac7c0f, type: 2}
   PF_Gas: {fileID: 1243976725738666, guid: 8639bca85418cc34d8b6d86c6492ee5f, type: 2}
   PF_Hole: {fileID: 1685000293122596, guid: 18215947c93adce4e830b754b333c6e5, type: 2}
+  PF_FireExtinguisher: {fileID: 1055736195145542, guid: 1cb0570acfad85c429fec2d47c5cecef,
+    type: 2}
+  PF_Plank: {fileID: 1016900011554552, guid: 807ac11d063886a4898bd8999fddbfd4, type: 2}
   PF_Camera: {fileID: 20133558330937034, guid: 81f2bc331f92a124d8b0f55e10751cf9, type: 2}
   levelFile: {fileID: 4900000, guid: 8b412979441cb2f4bbd5f1e8dbc15e37, type: 3}

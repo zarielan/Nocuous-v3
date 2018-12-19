@@ -40,9 +40,10 @@ public class LevelScript : MonoBehaviour
     private int levelWidth = 0;
 
     private Dictionary<Vector3, GameObject> Rooms;
-    private GameObject Player;
+    private Player player;
     private Camera Camera;
     private float fadeTime = 0.5f;
+    private UIHandler UI;
 
     void Start()
     {
@@ -83,16 +84,18 @@ public class LevelScript : MonoBehaviour
         Rooms.Add(Exit.transform.position, Exit);
 
         // Create the player
-        Player = Instantiate(PF_Player, new Vector3(0, UPPER_BOUND - 1, 0), NO_ROTATION);
-        Player.SendMessage("SetLevelInstance", this);
+        var p = Instantiate(PF_Player, new Vector3(0, UPPER_BOUND - 1, 0), NO_ROTATION);
+        player = p.GetComponent<Player>();
+        player.SetLevelInstance(this);
 
         // Create the camera
-        Camera = Instantiate(PF_Camera, Player.transform.position, NO_ROTATION);
-        Camera.SendMessage("SetPlayer", Player);
+        Camera = Instantiate(PF_Camera, player.transform.position, NO_ROTATION);
+        Camera.SendMessage("SetPlayer", p);
 
         AddItems();
 
-        UI_Canvas.SendMessage("FadeToGame", fadeTime);
+        UI = UI_Canvas.GetComponent<UIHandler>();
+        UI.FadeToGame(fadeTime);
     }
 
     private string[] readFile(TextAsset file)
@@ -114,8 +117,8 @@ public class LevelScript : MonoBehaviour
      */
     public void OnTurn()
     {
-        // 50% Chance of spreading gas or fire.
-        if (UnityEngine.Random.Range(0, 2) == 1)
+        // 25% Chance of spreading gas or fire.
+        if (UnityEngine.Random.Range(0, 4) == 1)
         {
             // Hashset that will contain places we'll put gas on. To prevent duplicates.
             var addGas = new HashSet<GameObject>();
@@ -329,9 +332,9 @@ public class LevelScript : MonoBehaviour
 
             // Add it to the canvas
             item.transform.SetParent(UI_Canvas.transform);
-            
+
             // Notify set canvas
-            UI_Canvas.SendMessage("OnAddChild", item);
+            UI.OnAddChild(item);
         }
     }
 
@@ -351,11 +354,11 @@ public class LevelScript : MonoBehaviour
     public void OnLevelExit()
     {
         // Start fading out
-        UI_Canvas.SendMessage("FadeToBlack", fadeTime);
+        UI.FadeToBlack(fadeTime);
 
         // Stop accepting inputs
-        Player.SendMessage("SetIsPlaying", false);
-        UI_Canvas.SendMessage("SetAcceptingInputs", false);
+        player.SetIsPlaying(false);
+        UI.SetAcceptingInputs(false);
 
         // Switch the screen to the next level upon fading
         Invoke("ExitLevel", fadeTime + 0.1f);
@@ -367,5 +370,10 @@ public class LevelScript : MonoBehaviour
     private void ExitLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void Update()
+    {
+        UI.SetGhostItemPosition(Camera.WorldToScreenPoint(player.GetNewRoomPosition()));
     }
 }

@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
     private Vector3 vel;
     private Quaternion newRotation;
     private LevelScript level;
+    private Vector3 nextRoomPosition;
 
     private bool isMoving = false;
     private bool isPlaying = true;
@@ -31,6 +32,8 @@ public class Player : MonoBehaviour
     {
         currentDirection = Direction.DOWN;
         newPosition = transform.position;
+
+        nextRoomPosition = Vector3.zero;
     }
     
     void Update()
@@ -89,6 +92,8 @@ public class Player : MonoBehaviour
                 }
             }
         }
+
+        SetNewRoomPosition();
 
         // Makes the player move and rotate to its new position and rotation smoothly.
         isMoving = transform.position != newPosition;
@@ -174,5 +179,37 @@ public class Player : MonoBehaviour
     public void SetIsPlaying(bool playing)
     {
         isPlaying = playing;
+    }
+
+    private void SetNewRoomPosition()
+    {
+        int x = 0;
+        int y = 0;
+        if (currentDirection == Direction.DOWN)
+        {
+            x = 0;
+            y = -2;
+        }
+        else if (currentDirection == Direction.UP)
+        {
+            x = 0;
+            y = 2;
+        }
+        else if (currentDirection == Direction.LEFT)
+        {
+            x = -2;
+            y = 0;
+        }
+        else if (currentDirection == Direction.RIGHT)
+        {
+            x = 2;
+            y = 0;
+        }
+        nextRoomPosition = new Vector3((int)Math.Round(transform.position.x, 0) + x, (int)Math.Round(transform.position.y, 0) + y, 0);
+    }
+
+    public Vector3 GetNewRoomPosition()
+    {
+        return nextRoomPosition;
     }
 }

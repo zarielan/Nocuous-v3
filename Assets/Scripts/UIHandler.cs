@@ -12,16 +12,21 @@ public class UIHandler : MonoBehaviour
     private GameObject itemselect;
 
     private List<GameObject> children;
+    private List<GameObject> childrenGhost;
 
     private Image fader;
     private bool acceptingInputs;
+    private int selectedItem = 0;
+    private Vector3 ghostItemPosition;
 
     private void Start()
     {
         children = new List<GameObject>();
+        childrenGhost = new List<GameObject>();
         acceptingInputs = true;
 
         fader = transform.Find("Fader").gameObject.GetComponent<Image>();
+        ghostItemPosition = Vector3.zero;
     }
 
     // When an item has been added.
@@ -49,9 +54,21 @@ public class UIHandler : MonoBehaviour
         obj_rect.sizeDelta = new Vector2(64, 64);
         obj_rect.transform.rotation = Quaternion.Euler(0, 0, 0);
 
+        var ghost = Instantiate(obj);
+        Destroy(ghost.GetComponent<SpriteRenderer>());
+        Destroy(ghost.GetComponent<CircleCollider2D>());
+        Destroy(ghost.GetComponent<ItemWiggle>());
+        ghost.GetComponent<Image>().canvasRenderer.SetColor(new Color(1, 1, 1, 0f));
+        ghost.transform.SetParent(transform);
+        ghost.GetComponent<RectTransform>().sizeDelta = new Vector2(32, 32);
+        ghost.GetComponent<RectTransform>().position = new Vector2(0, 0);
+        ghost.name = "Ghost" + index;
+        childrenGhost.Add(ghost);
+
         if (index == 1)
         {
             itemselect = Instantiate(PF_ItemSelect, holder.transform);
+            MoveSelectedItem(0);
         }
     }
 
@@ -65,10 +82,24 @@ public class UIHandler : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha2) && children.Count > 1)
                 MoveSelectedItem(1);
         }
+
+        if (childrenGhost.Count > 0)
+        {
+            GameObject ghost = childrenGhost[selectedItem];
+            ghost.GetComponent<RectTransform>().position = ghostItemPosition;
+        }
     }
 
     private void MoveSelectedItem(int index)
     {
+        var ghostbefore = childrenGhost[selectedItem];
+        ghostbefore.GetComponent<Image>().canvasRenderer.SetAlpha(0f);
+
+        selectedItem = index;
+
+        GameObject ghost = childrenGhost[selectedItem];
+        ghost.GetComponent<Image>().canvasRenderer.SetColor(new Color(1, 1, 1, 0.5f));        
+
         itemselect.transform.SetParent(children[index].transform);
         itemselect.transform.localPosition = new Vector3(0, 0, 0);
     }
@@ -90,5 +121,10 @@ public class UIHandler : MonoBehaviour
     public void SetAcceptingInputs(bool arewe)
     {
         acceptingInputs = arewe;
+    }
+
+    public void SetGhostItemPosition(Vector3 v)
+    {
+        ghostItemPosition = v;
     }
 }

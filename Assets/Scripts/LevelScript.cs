@@ -26,6 +26,7 @@ public class LevelScript : MonoBehaviour
     public GameObject PF_Hole;
     public GameObject PF_FireExtinguisher;
     public GameObject PF_Plank;
+    public GameObject PF_ExitRoom;
 
     public Camera PF_Camera;
     public Canvas UI_Canvas;
@@ -76,6 +77,9 @@ public class LevelScript : MonoBehaviour
             }
         }
 
+        var Exit = Instantiate(PF_ExitRoom, new Vector3(levelWidth * 2, 0, 0), NO_ROTATION);
+        Rooms.Add(Exit.transform.position, Exit);
+
         // Create the player
         Player = Instantiate(PF_Player, new Vector3(0, UPPER_BOUND - 1, 0), NO_ROTATION);
         Player.SendMessage("SetLevelInstance", this);
@@ -120,6 +124,9 @@ public class LevelScript : MonoBehaviour
             // Iterate through all rooms to find gases or fire
             foreach (var r in Rooms)
             {
+                if (r.Value.name == GetPrefabName(PF_ExitRoom))
+                    continue;
+
                 // Check for each room's children
                 Transform roomTransform = r.Value.transform;
                 foreach (Transform t in roomTransform)

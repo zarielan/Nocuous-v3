@@ -152,4 +152,10 @@ public class Player : MonoBehaviour
             level.OnItemGet(collision.gameObject);
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.name == level.GetPrefabName(level.PF_ExitRoom))
+            print("EXITED");
+    }
 }

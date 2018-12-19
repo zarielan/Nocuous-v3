@@ -158,10 +158,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    /*
+     *  This is so much better than OnCollisionEnter2D holy shit...oh well, can't change the code na lol
+     */ 
     private void OnTriggerEnter2D(Collider2D collision)
     {
+        // If the player has entered the exit room,
         if (collision.gameObject.name == level.GetPrefabName(level.PF_ExitRoom))
         {
+            // Start exiting the level
             level.OnLevelExit();
         }
     }

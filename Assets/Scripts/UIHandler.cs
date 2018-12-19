@@ -27,6 +27,7 @@ public class UIHandler : MonoBehaviour
     // When an item has been added.
     public void OnAddChild(GameObject obj)
     {
+        // Create a holder GameObject, which will contain both the item and the select icon
         GameObject holder = new GameObject();
         holder.transform.SetParent(transform);
         var rect = holder.AddComponent<RectTransform>();
@@ -40,15 +41,6 @@ public class UIHandler : MonoBehaviour
 
         rect.anchoredPosition = new Vector2(-50 + 100 * index, -50);
         holder.name = "Item" + index;
-
-        // Set its position to the upper-right corner
-        /*
-        obj.GetComponent<RectTransform>().sizeDelta = new Vector2(64, 64);
-        obj.layer = 5;
-        obj.GetComponent<RectTransform>().anchorMin = new Vector2(1, 1);
-        obj.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
-        obj.GetComponent<RectTransform>().anchoredPosition = new Vector2(50 - 100 * index, -50);
-        */
 
         obj.transform.SetParent(holder.transform);
         obj.transform.localPosition = new Vector3(0, 0, 0);

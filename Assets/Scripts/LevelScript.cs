@@ -345,14 +345,25 @@ public class LevelScript : MonoBehaviour
         return prefab.name + "(Clone)";
     }
 
+    /*
+     *  Called when it's time to leave the level
+     */
     public void OnLevelExit()
     {
+        // Start fading out
         UI_Canvas.SendMessage("FadeToBlack", fadeTime);
+
+        // Stop accepting inputs
         Player.SendMessage("SetIsPlaying", false);
         UI_Canvas.SendMessage("SetAcceptingInputs", false);
+
+        // Switch the screen to the next level upon fading
         Invoke("ExitLevel", fadeTime + 0.1f);
     }
 
+    /*
+     *  In this case, the next level is just the same level but reset
+     */ 
     private void ExitLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);

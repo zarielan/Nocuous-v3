@@ -100,7 +100,7 @@ public class Player : MonoBehaviour
         int newY = (int)Math.Round(transform.position.y, 0) + y;
 
         // Check if the new position is within map boundaries and if you are allowed to move (moving/rotating animation is done)
-        if (newX >= LevelScript.LOWER_BOUND && newX <= LevelScript.UPPER_BOUND && newY >= LevelScript.LOWER_BOUND && newY <= LevelScript.UPPER_BOUND && !isMoving)
+        if (level.GetRooms().ContainsKey(new Vector3(newX, newY, 0)) && !isMoving)
         {            
             var next = new Vector3(newX, newY, 0);
 

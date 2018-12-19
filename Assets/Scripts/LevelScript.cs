@@ -95,9 +95,6 @@ public class LevelScript : MonoBehaviour
     {
         string[] lines = Regex.Split(file.text, Environment.NewLine);
         
-        foreach (var l in lines)
-            print(l);
-
         // The list is reversed because in the game, the y-axis points upwards, but we're
         // reading the file from top to bottom
         Array.Reverse(lines);
@@ -277,6 +274,9 @@ public class LevelScript : MonoBehaviour
         // possible rooms to add items in.
         foreach (var r in Rooms)
         {
+            if (r.Value.name == GetPrefabName(PF_ExitRoom))
+                continue;
+
             bool add = true;
 
             // Check the room's children if it has any element in it
@@ -339,5 +339,12 @@ public class LevelScript : MonoBehaviour
     public string GetPrefabName(GameObject prefab)
     {
         return prefab.name + "(Clone)";
+    }
+
+    public void OnLevelExit()
+    {
+        UI_Canvas.SendMessage("FadeToBlack");
+        Player.SendMessage("SetIsPlaying", false);
+        UI_Canvas.SendMessage("SetAcceptingInputs", false);
     }
 }

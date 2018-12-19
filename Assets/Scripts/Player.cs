@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
     private LevelScript level;
 
     private bool isMoving = false;
+    private bool isPlaying = true;
 
     void Start()
     {
@@ -36,52 +37,56 @@ public class Player : MonoBehaviour
     {
         // The player turns depending on where you press the arrow key. If you press an arrow key and 
         // is already facing that direction, you get sent to that room.
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+
+        if (isPlaying)
         {
-            if (currentDirection == Direction.RIGHT)
+            if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                Move(2, 0);
+                if (currentDirection == Direction.RIGHT)
+                {
+                    Move(2, 0);
+                }
+                else
+                {
+                    currentDirection = Direction.RIGHT;
+                    newRotation = Quaternion.Euler(0, 0, 90);
+                }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))
             {
-                currentDirection = Direction.RIGHT;
-                newRotation = Quaternion.Euler(0, 0, 90);
+                if (currentDirection == Direction.LEFT)
+                {
+                    Move(-2, 0);
+                }
+                else
+                {
+                    currentDirection = Direction.LEFT;
+                    newRotation = Quaternion.Euler(0, 0, 270);
+                }
             }
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            if (currentDirection == Direction.LEFT)
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
             {
-                Move(-2, 0);
+                if (currentDirection == Direction.UP)
+                {
+                    Move(0, 2);
+                }
+                else
+                {
+                    currentDirection = Direction.UP;
+                    newRotation = Quaternion.Euler(0, 0, 180);
+                }
             }
-            else
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
             {
-                currentDirection = Direction.LEFT;
-                newRotation = Quaternion.Euler(0, 0, 270);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            if (currentDirection == Direction.UP)
-            {
-                Move(0, 2);
-            }
-            else
-            {
-                currentDirection = Direction.UP;
-                newRotation = Quaternion.Euler(0, 0, 180);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            if (currentDirection == Direction.DOWN)
-            {
-                Move(0, -2);
-            }
-            else
-            {
-                currentDirection = Direction.DOWN;
-                newRotation = Quaternion.Euler(0, 0, 0);
+                if (currentDirection == Direction.DOWN)
+                {
+                    Move(0, -2);
+                }
+                else
+                {
+                    currentDirection = Direction.DOWN;
+                    newRotation = Quaternion.Euler(0, 0, 0);
+                }
             }
         }
 
@@ -156,6 +161,13 @@ public class Player : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.name == level.GetPrefabName(level.PF_ExitRoom))
-            print("EXITED");
+        {
+            level.OnLevelExit();
+        }
+    }
+
+    public void SetIsPlaying(bool playing)
+    {
+        isPlaying = playing;
     }
 }

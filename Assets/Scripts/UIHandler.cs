@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 /*
  *  The class that handles how the inventory will be displayed on the upper-right corner.
@@ -11,12 +12,17 @@ public class UIHandler : MonoBehaviour
     private GameObject itemselect;
 
     private List<GameObject> children;
-    private int selectedItem;
+
+    private Image fader;
+    private bool acceptingInputs;
 
     private void Start()
     {
         children = new List<GameObject>();
-        selectedItem = 0;
+        acceptingInputs = true;
+
+        fader = transform.Find("Fader").gameObject.GetComponent<Image>();
+        fader.canvasRenderer.SetAlpha(0f);
     }
 
     // When an item has been added.
@@ -60,17 +66,30 @@ public class UIHandler : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1) && children.Count > 0)
-            MoveSelectedItem(0);
+        if (acceptingInputs)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1) && children.Count > 0)
+                MoveSelectedItem(0);
 
-        if (Input.GetKeyDown(KeyCode.Alpha2) && children.Count > 1)
-            MoveSelectedItem(1);
+            if (Input.GetKeyDown(KeyCode.Alpha2) && children.Count > 1)
+                MoveSelectedItem(1);
+        }
     }
 
     private void MoveSelectedItem(int index)
     {
-        print("MOVE!");
         itemselect.transform.SetParent(children[index].transform);
         itemselect.transform.localPosition = new Vector3(0, 0, 0);
+    }
+
+    public void FadeToBlack()
+    {
+        fader.transform.SetAsLastSibling();
+        fader.CrossFadeAlpha(1f, 1f, false);
+    }
+
+    public void SetAcceptingInputs(bool arewe)
+    {
+        acceptingInputs = arewe;
     }
 }

@@ -22,7 +22,6 @@ public class UIHandler : MonoBehaviour
         acceptingInputs = true;
 
         fader = transform.Find("Fader").gameObject.GetComponent<Image>();
-        fader.canvasRenderer.SetAlpha(0f);
     }
 
     // When an item has been added.
@@ -82,10 +81,18 @@ public class UIHandler : MonoBehaviour
         itemselect.transform.localPosition = new Vector3(0, 0, 0);
     }
 
-    public void FadeToBlack()
+    public void FadeToBlack(float time)
     {
         fader.transform.SetAsLastSibling();
-        fader.CrossFadeAlpha(1f, 1f, false);
+        fader.canvasRenderer.SetAlpha(0f);
+        fader.CrossFadeAlpha(1f, time, false);
+    }
+
+    public void FadeToGame(float time)
+    {
+        fader.transform.SetAsLastSibling();
+        fader.canvasRenderer.SetAlpha(1f);
+        fader.CrossFadeAlpha(0f, time, false);
     }
 
     public void SetAcceptingInputs(bool arewe)

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Text.RegularExpressions;
 using System;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 /* 
  *  The main script file when the level loads. Everything in the map is generated from this file.
@@ -41,6 +42,7 @@ public class LevelScript : MonoBehaviour
     private Dictionary<Vector3, GameObject> Rooms;
     private GameObject Player;
     private Camera Camera;
+    private float fadeTime = 0.5f;
 
     void Start()
     {
@@ -89,6 +91,8 @@ public class LevelScript : MonoBehaviour
         Camera.SendMessage("SetPlayer", Player);
 
         AddItems();
+
+        UI_Canvas.SendMessage("FadeToGame", fadeTime);
     }
 
     private string[] readFile(TextAsset file)
@@ -343,8 +347,14 @@ public class LevelScript : MonoBehaviour
 
     public void OnLevelExit()
     {
-        UI_Canvas.SendMessage("FadeToBlack");
+        UI_Canvas.SendMessage("FadeToBlack", fadeTime);
         Player.SendMessage("SetIsPlaying", false);
         UI_Canvas.SendMessage("SetAcceptingInputs", false);
+        Invoke("ExitLevel", fadeTime + 0.1f);
+    }
+
+    private void ExitLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

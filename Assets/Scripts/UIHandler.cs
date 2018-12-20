@@ -67,7 +67,7 @@ public class UIHandler : MonoBehaviour
 
         if (index == 1)
         {
-            itemselect = Instantiate(PF_ItemSelect, holder.transform);
+            itemselect = Instantiate(PF_ItemSelect, transform);
             MoveSelectedItem(0);
         }
     }
@@ -79,32 +79,31 @@ public class UIHandler : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha1) && children.Count > 0)
                 MoveSelectedItem(0);
 
-            if (Input.GetKeyDown(KeyCode.Alpha2) && children.Count > 1)
+            if (Input.GetKeyDown(KeyCode.Alpha2) && 1 < children.Count)
                 MoveSelectedItem(1);
         }
 
         if (childrenGhost.Count > 0)
         {
-            if (selectedItem >= children.Count)
-                selectedItem = children.Count - 1;
-
             GameObject ghost = childrenGhost[selectedItem];
             ghost.GetComponent<RectTransform>().position = ghostItemPosition;
-        }       
+        }
     }
 
-    private void MoveSelectedItem(int index)
+    private void MoveSelectedItem(int index, bool remove = true)
     {
-        var ghostbefore = childrenGhost[selectedItem];
-        ghostbefore.GetComponent<Image>().canvasRenderer.SetAlpha(0f);
+        if (remove)
+        {
+            var ghostbefore = childrenGhost[selectedItem];
+            ghostbefore.GetComponent<Image>().canvasRenderer.SetAlpha(0f);
+        }
 
         selectedItem = index;
 
         GameObject ghost = childrenGhost[selectedItem];
-        ghost.GetComponent<Image>().canvasRenderer.SetColor(new Color(1, 1, 1, 0.5f));        
+        ghost.GetComponent<Image>().canvasRenderer.SetAlpha(0.5f);
 
-        itemselect.transform.SetParent(children[index].transform);
-        itemselect.transform.localPosition = new Vector3(0, 0, 0);
+        itemselect.transform.position = children[index].transform.position;
     }
 
     public void FadeToBlack(float time)
@@ -129,13 +128,26 @@ public class UIHandler : MonoBehaviour
 
     public void OnRemoveChild()
     {
-        var current = children[selectedItem];
-        var current_ghost = childrenGhost[selectedItem];
+        int y = selectedItem;
+        var currentItem = children[y];
+        var currentGhost = childrenGhost[y];
 
-        current.transform.parent = null;
-        current_ghost.transform.parent = null;
-        children.Remove(current);
-        childrenGhost.Remove(current_ghost);
+        children.RemoveAt(selectedItem);
+        childrenGhost.RemoveAt(selectedItem);
+
+        var x = selectedItem;
+        while (x >= children.Count)
+        {
+            x--;            
+        }
+        
+        for (int i = 0; i < children.Count; i++)
+            children[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(50 + 100 * i, -50);
+
+        Destroy(currentItem);
+        Destroy(currentGhost);
+
+        MoveSelectedItem(x, false);
     }
 
     public void SetAcceptingInputs(bool arewe)

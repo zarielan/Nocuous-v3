@@ -388,9 +388,6 @@ public class LevelScript : MonoBehaviour
         {
             var item = UI.UseItem().transform.GetChild(0);
 
-            if (item.name == GetPrefabName(PF_Plank))
-                UI.OnRemoveChild();
-
             var place = player.GetNewRoomPosition();
             var roomToPlace = Rooms[place];
 
@@ -399,6 +396,9 @@ public class LevelScript : MonoBehaviour
 
             var itemScript = item.GetComponent<Item>();
             itemScript.UseItem(this, roomToPlace);
+
+            if (item.name == GetPrefabName(PF_Plank))
+                UI.OnRemoveChild();
         }
         // Silence the errors. Shhhh
         catch (ArgumentOutOfRangeException)

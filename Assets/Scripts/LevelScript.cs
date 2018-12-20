@@ -39,6 +39,7 @@ public class LevelScript : MonoBehaviour
 
     public AudioClip sfx_explode;
     public AudioClip sfx_hammer;
+    public AudioClip sfx_door;
 
     /* Class variables */
     private string[] levelData;
@@ -133,6 +134,8 @@ public class LevelScript : MonoBehaviour
      */
     public void OnTurn(Vector3 prev_playerPos, Vector3 newPos)
     {
+        sfx_player.PlayOneShot(sfx_door);
+
         // 25% Chance of spreading gas or fire.
         if (UnityEngine.Random.Range(0, 4) == 1)
         {

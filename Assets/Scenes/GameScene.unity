@@ -712,9 +712,9 @@ MonoBehaviour:
     type: 2}
   PF_Camera: {fileID: 20133558330937034, guid: 81f2bc331f92a124d8b0f55e10751cf9, type: 2}
   UI_Canvas: {fileID: 571178157}
-  levelFile: {fileID: 4900000, guid: 8b412979441cb2f4bbd5f1e8dbc15e37, type: 3}
   sfx_explode: {fileID: 8300000, guid: d47b870415d557742aef7ca3b85de924, type: 3}
   sfx_hammer: {fileID: 8300000, guid: 1a7ffbfbcc624714a8ac536ea80e9b26, type: 3}
+  sfx_door: {fileID: 8300000, guid: e3a82eb924d81734b89fbd171578bd6d, type: 3}
 --- !u!82 &1579711753
 AudioSource:
   m_ObjectHideFlags: 0

@@ -21,8 +21,10 @@ public class Item : MonoBehaviour
         }
     }
 
-    public void UseItem(LevelScript lvl, GameObject inthisroom)
+    public bool UseItem(LevelScript lvl, GameObject inthisroom)
     {
+        bool allUsedUp = false;
+
         if (name == lvl.GetPrefabName(lvl.PF_FireExtinguisher))
         {
             Transform fire = inthisroom.transform.Find(lvl.GetPrefabName(lvl.PF_Fire));
@@ -40,9 +42,11 @@ public class Item : MonoBehaviour
             {
                 lvl.CreateElementInRoom(lvl.PF_PlankBridge, inthisroom);
 
-                // Decrease plank here TODO
+                allUsedUp = true;
             }
         }
+
+        return allUsedUp;
     }
 
     public void SetRotating(bool rot)

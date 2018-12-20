@@ -395,10 +395,13 @@ public class LevelScript : MonoBehaviour
                 return;
 
             var itemScript = item.GetComponent<Item>();
-            itemScript.UseItem(this, roomToPlace);
+            var allUsedUp = itemScript.UseItem(this, roomToPlace);
 
-            if (item.name == GetPrefabName(PF_Plank))
-                UI.OnRemoveChild();
+            if (allUsedUp)
+            {
+                if (item.name == GetPrefabName(PF_Plank))
+                    UI.OnRemoveChild();
+            }
         }
         // Silence the errors. Shhhh
         catch (ArgumentOutOfRangeException)

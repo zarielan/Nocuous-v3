@@ -27,6 +27,9 @@ public class UIHandler : MonoBehaviour
 
         fader = transform.Find("Fader").gameObject.GetComponent<Image>();
         ghostItemPosition = Vector3.zero;
+
+        itemselect = Instantiate(PF_ItemSelect, transform);
+        itemselect.GetComponent<Image>().canvasRenderer.SetAlpha(0f);
     }
 
     // When an item has been added.
@@ -66,10 +69,12 @@ public class UIHandler : MonoBehaviour
         childrenGhost.Add(ghost);
 
         if (index == 1)
-        {
-            itemselect = Instantiate(PF_ItemSelect, transform);
-            MoveSelectedItem(0);
+        {            
+            MoveSelectedItem(0, false);
         }
+
+        if (children.Count > 0)
+            itemselect.GetComponent<Image>().canvasRenderer.SetAlpha(1f);
     }
 
     private void Update()
@@ -134,20 +139,27 @@ public class UIHandler : MonoBehaviour
 
         children.RemoveAt(selectedItem);
         childrenGhost.RemoveAt(selectedItem);
-
+        
         var x = selectedItem;
         while (x >= children.Count)
         {
             x--;            
         }
-        
+
+        if (x < 0)
+        {
+            itemselect.GetComponent<Image>().canvasRenderer.SetAlpha(0f);
+            x = 0;
+        }
+
         for (int i = 0; i < children.Count; i++)
-            children[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(50 + 100 * i, -50);
+            children[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(-50 + 100 * i, -50);
 
         Destroy(currentItem);
         Destroy(currentGhost);
 
         MoveSelectedItem(x, false);
+ 
     }
 
     public void SetAcceptingInputs(bool arewe)

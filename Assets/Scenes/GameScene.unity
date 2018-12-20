@@ -715,6 +715,7 @@ MonoBehaviour:
   sfx_explode: {fileID: 8300000, guid: d47b870415d557742aef7ca3b85de924, type: 3}
   sfx_hammer: {fileID: 8300000, guid: 1a7ffbfbcc624714a8ac536ea80e9b26, type: 3}
   sfx_door: {fileID: 8300000, guid: e3a82eb924d81734b89fbd171578bd6d, type: 3}
+  sfx_death: {fileID: 8300000, guid: c257dced97077884a8303b827bf0337d, type: 3}
 --- !u!82 &1579711753
 AudioSource:
   m_ObjectHideFlags: 0

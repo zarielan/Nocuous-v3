@@ -40,6 +40,7 @@ public class LevelScript : MonoBehaviour
     public AudioClip sfx_explode;
     public AudioClip sfx_hammer;
     public AudioClip sfx_door;
+    public AudioClip sfx_death;
 
     /* Class variables */
     private string[] levelData;
@@ -49,13 +50,15 @@ public class LevelScript : MonoBehaviour
     private Dictionary<Vector3, GameObject> Rooms;
     private Player player;
     private Camera Camera;
-    private float fadeTime = 1f;
+    private float fadeTime = 2f;
     private UIHandler UI;
 
     private GameObject selection;
     private int influencePart = 0;
     private Vector3 selectedToInfluence;
     private AudioSource sfx_player;
+
+    public bool checkedHealth;
 
     void Start()
     {
@@ -381,6 +384,8 @@ public class LevelScript : MonoBehaviour
      */
     public void OnLevelExit(string msg)
     {
+        sfx_player.PlayOneShot(sfx_death);
+
         // Start fading out
         UI.FadeToBlack(fadeTime, msg);
 
@@ -402,6 +407,7 @@ public class LevelScript : MonoBehaviour
 
     private void Update()
     {
+        checkedHealth = false;
         UI.SetGhostItemPosition(Camera.WorldToScreenPoint(player.GetNewRoomPosition()));
     }
 
@@ -496,12 +502,16 @@ public class LevelScript : MonoBehaviour
 
                     // In the end, destroy the original gas
                     Destroy(previousRoom.transform.Find(GetPrefabName(PF_Gas)).gameObject);
+
+                    if (!checkedHealth)
+                    {
+                        CheckHealth();
+                    }
                 }
 
                 influencePart = 0;
                 selection.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
-                SpreadElements();
-                CheckHealth();
+                SpreadElements();                
             }
         }
         catch (KeyNotFoundException)

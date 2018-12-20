@@ -189,13 +189,21 @@ public class Player : MonoBehaviour
         }
         else if (collision.gameObject.name == level.GetPrefabName(level.PF_Gas))
         {
-            print("Hit by gas. Decreasing health by 1 point");
-            SetHealth(health - 1);
+            if (!level.checkedHealth)
+            {
+                print("Hit by gas. Decreasing health by 1 point");
+                SetHealth(health - 1);
+                level.checkedHealth = true;
+            }
         }
         else if (collision.gameObject.name == level.GetPrefabName(level.PF_Fire))
         {
-            print("Hit by fire. You dead bro lmao");
-            SetHealth(0);
+            if (!level.checkedHealth)
+            {
+                print("Hit by fire. You dead bro lmao");
+                SetHealth(0);
+                level.checkedHealth = true;
+            }
         }
     }
 

@@ -29,6 +29,7 @@ public class LevelScript : MonoBehaviour
     public GameObject PF_Plank;
     public GameObject PF_ExitRoom;
     public GameObject PF_PlankBridge;
+    public GameObject PF_Selection;
 
     public Camera PF_Camera;
     public Canvas UI_Canvas;
@@ -45,6 +46,10 @@ public class LevelScript : MonoBehaviour
     private Camera Camera;
     private float fadeTime = 0.5f;
     private UIHandler UI;
+
+    private GameObject selection;
+    private int influencePart = 0;
+    private Vector3 selectedToInfluence;
 
     void Start()
     {
@@ -419,9 +424,63 @@ public class LevelScript : MonoBehaviour
     public void OnMouseClick(Vector3 mouse)
     {
         Vector3 world = Camera.ScreenToWorldPoint(mouse);
-        int roomX = Convert.ToInt32(world.x);
-        int roomY = Convert.ToInt32(world.y);
+        int roomX = Convert.ToInt32(world.x / 2) * 2;
+        int roomY = Convert.ToInt32(world.y / 2) * 2;
+        Vector3 roomPosition = new Vector3(roomX, roomY, 0);
+                
+        try
+        {
+            GameObject roomSelected = Rooms[roomPosition];
 
-        GameObject roomSelected = Rooms[new Vector3(roomX, roomY, 0)];
+            if (influencePart == 0)
+            {
+                if (roomSelected.transform.Find(GetPrefabName(PF_Gas)) != null)
+                {
+                    influencePart = 1;
+
+                    if (selection == null)
+                        selection = Instantiate(PF_Selection);
+
+                    selection.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+                    selection.transform.position = roomPosition;
+                    selectedToInfluence = roomPosition;
+                }
+            }
+            else if (influencePart == 1)
+            {
+                float distance = Vector3.Distance(roomPosition, selectedToInfluence);
+
+                var previousRoom = Rooms[selectedToInfluence];
+
+                if (distance < 2.5f && roomSelected != previousRoom)
+                {
+                    if (roomSelected.transform.Find(GetPrefabName(PF_Gas)) != null)
+                    {
+                        // It already has gas, don't do anything
+                    }
+                    else if (roomSelected.transform.Find(GetPrefabName(PF_Fire)) != null)
+                    {
+                        // Remove the fire
+                        Destroy(roomSelected.transform.Find(GetPrefabName(PF_Fire)).gameObject);
+                        // Then put a hole there
+                        CreateElementInRoom(PF_Hole, roomSelected);
+                    }
+                    else
+                    {
+                        CreateElementInRoom(PF_Gas, roomSelected);
+                    }
+
+                    // In the end, destroy the original gas
+                    Destroy(previousRoom.transform.Find(GetPrefabName(PF_Gas)).gameObject);
+                }
+
+                influencePart = 0;
+                selection.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+            }
+        }
+        catch (KeyNotFoundException)
+        {
+            return;
+        }        
     }
 }

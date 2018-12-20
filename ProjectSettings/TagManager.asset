@@ -53,6 +53,9 @@ TagManager:
   - name: FG Elements
     uniqueID: 3218700519
     locked: 0
+  - name: Selection
+    uniqueID: 4028028929
+    locked: 0
   - name: Walls
     uniqueID: 3439198659
     locked: 0

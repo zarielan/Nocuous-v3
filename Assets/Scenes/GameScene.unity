@@ -404,6 +404,8 @@ MonoBehaviour:
     type: 2}
   PF_PlankBridge: {fileID: 1662580395692462, guid: 49d1a455ac7ee674d92a0b38a1894b40,
     type: 2}
+  PF_Selection: {fileID: 1305864324804974, guid: e8e5e636d54a374449eea3f76842be1d,
+    type: 2}
   PF_Camera: {fileID: 20133558330937034, guid: 81f2bc331f92a124d8b0f55e10751cf9, type: 2}
   UI_Canvas: {fileID: 571178157}
   levelFile: {fileID: 4900000, guid: 8b412979441cb2f4bbd5f1e8dbc15e37, type: 3}

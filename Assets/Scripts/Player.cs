@@ -91,6 +91,11 @@ public class Player : MonoBehaviour
                     newRotation = Quaternion.Euler(0, 0, 0);
                 }
             }
+
+            else if (Input.GetKeyDown(KeyCode.Return))
+            {
+                level.OnItemUse();
+            }
         }
 
         SetNewRoomPosition();

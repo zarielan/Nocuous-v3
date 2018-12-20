@@ -328,7 +328,7 @@ public class LevelScript : MonoBehaviour
             // Remove everything that made it an item
             Destroy(item.GetComponent<SpriteRenderer>());
             Destroy(item.GetComponent<CircleCollider2D>());
-            Destroy(item.GetComponent<ItemWiggle>());
+            item.GetComponent<Item>().SetRotating(false);
 
             // Add it to the canvas
             item.transform.SetParent(UI_Canvas.transform);
@@ -375,5 +375,33 @@ public class LevelScript : MonoBehaviour
     private void Update()
     {
         UI.SetGhostItemPosition(Camera.WorldToScreenPoint(player.GetNewRoomPosition()));
+    }
+
+    public void OnItemUse()
+    {
+        try
+        {
+            var item = UI.UseItem().transform.GetChild(0);
+
+            var place = player.GetNewRoomPosition();
+            var roomToPlace = Rooms[place];
+
+            if (roomToPlace.name == GetPrefabName(PF_ExitRoom))
+                return;
+
+            var itemScript = item.GetComponent<Item>();
+            itemScript.UseItem(this, roomToPlace);
+        }
+        // Silence the errors. Shhhh
+        catch (ArgumentOutOfRangeException e)
+        {
+            // If you're trying to use an item but you have no items
+            return;
+        }
+        catch (KeyNotFoundException e)
+        {
+            // If you're trying to place an item outside the map
+            return;
+        }
     }
 }

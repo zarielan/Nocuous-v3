@@ -57,7 +57,7 @@ public class UIHandler : MonoBehaviour
         var ghost = Instantiate(obj);
         Destroy(ghost.GetComponent<SpriteRenderer>());
         Destroy(ghost.GetComponent<CircleCollider2D>());
-        Destroy(ghost.GetComponent<ItemWiggle>());
+        ghost.GetComponent<Item>().SetRotating(false);
         ghost.GetComponent<Image>().canvasRenderer.SetColor(new Color(1, 1, 1, 0f));
         ghost.transform.SetParent(transform);
         ghost.GetComponent<RectTransform>().sizeDelta = new Vector2(32, 32);
@@ -116,6 +116,11 @@ public class UIHandler : MonoBehaviour
         fader.transform.SetAsLastSibling();
         fader.canvasRenderer.SetAlpha(1f);
         fader.CrossFadeAlpha(0f, time, false);
+    }
+
+    public GameObject UseItem()
+    {
+        return children[selectedItem];        
     }
 
     public void SetAcceptingInputs(bool arewe)

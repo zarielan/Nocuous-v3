@@ -59,6 +59,7 @@ public class LevelScript : MonoBehaviour
     private AudioSource sfx_player;
 
     public bool checkedHealth;
+    public bool won = false;
 
     void Start()
     {
@@ -402,7 +403,17 @@ public class LevelScript : MonoBehaviour
      */ 
     private void ExitLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        if (won)
+            StaticClass.LEVEL_NUMBER++;
+
+        if (StaticClass.LEVEL_NUMBER >= 3)
+        {
+            SceneManager.LoadScene("EndScene");
+        }
+        else
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     private void Update()

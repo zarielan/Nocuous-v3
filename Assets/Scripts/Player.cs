@@ -186,6 +186,7 @@ public class Player : MonoBehaviour
         {
             // Start exiting the level
             level.OnLevelExit("You made it!");
+            level.won = true;
         }
         else if (collision.gameObject.name == level.GetPrefabName(level.PF_Gas))
         {

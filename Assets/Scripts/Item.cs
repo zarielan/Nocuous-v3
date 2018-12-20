@@ -38,7 +38,9 @@ public class Item : MonoBehaviour
 
             if (hole != null)
             {
+                lvl.CreateElementInRoom(lvl.PF_PlankBridge, inthisroom);
 
+                // Decrease plank here TODO
             }
         }
     }

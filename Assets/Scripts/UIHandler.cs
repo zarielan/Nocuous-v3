@@ -85,9 +85,12 @@ public class UIHandler : MonoBehaviour
 
         if (childrenGhost.Count > 0)
         {
+            if (selectedItem >= children.Count)
+                selectedItem = children.Count - 1;
+
             GameObject ghost = childrenGhost[selectedItem];
             ghost.GetComponent<RectTransform>().position = ghostItemPosition;
-        }
+        }       
     }
 
     private void MoveSelectedItem(int index)
@@ -120,7 +123,19 @@ public class UIHandler : MonoBehaviour
 
     public GameObject UseItem()
     {
-        return children[selectedItem];        
+        GameObject current = children[selectedItem];
+        return current;        
+    }
+
+    public void OnRemoveChild()
+    {
+        var current = children[selectedItem];
+        var current_ghost = childrenGhost[selectedItem];
+
+        current.transform.parent = null;
+        current_ghost.transform.parent = null;
+        children.Remove(current);
+        childrenGhost.Remove(current_ghost);
     }
 
     public void SetAcceptingInputs(bool arewe)

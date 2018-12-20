@@ -68,6 +68,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92a4e027c5279fe4396bde3729438250, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PF_PlankBrige: {fileID: 1662580395692462, guid: 49d1a455ac7ee674d92a0b38a1894b40,
+    type: 2}
 --- !u!212 &212993865270226904
 SpriteRenderer:
   m_ObjectHideFlags: 1

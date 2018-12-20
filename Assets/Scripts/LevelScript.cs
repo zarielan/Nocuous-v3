@@ -28,6 +28,7 @@ public class LevelScript : MonoBehaviour
     public GameObject PF_FireExtinguisher;
     public GameObject PF_Plank;
     public GameObject PF_ExitRoom;
+    public GameObject PF_PlankBridge;
 
     public Camera PF_Camera;
     public Canvas UI_Canvas;
@@ -115,7 +116,7 @@ public class LevelScript : MonoBehaviour
     /*
      *  On each turn of the player, somethings can happen.
      */
-    public void OnTurn()
+    public void OnTurn(Vector3 prev_playerPos)
     {
         // 25% Chance of spreading gas or fire.
         if (UnityEngine.Random.Range(0, 4) == 1)
@@ -243,6 +244,10 @@ public class LevelScript : MonoBehaviour
                 }
             }
         }
+
+        var plankBridge = Rooms[prev_playerPos].transform.Find(GetPrefabName(PF_PlankBridge));
+        if (plankBridge != null)
+            Destroy(plankBridge.gameObject);            
     }
 
     private List<Vector3> GetRoomNeighbors(Vector3 Current)
@@ -267,7 +272,7 @@ public class LevelScript : MonoBehaviour
     /*
      *  Add the element to the room specified, given the prefab.
      */
-    private void CreateElementInRoom(GameObject prefab, GameObject room)
+    public void CreateElementInRoom(GameObject prefab, GameObject room)
     {
         GameObject elem = Instantiate(prefab, room.transform.position, NO_ROTATION);
         elem.transform.parent = room.transform;
@@ -383,6 +388,9 @@ public class LevelScript : MonoBehaviour
         {
             var item = UI.UseItem().transform.GetChild(0);
 
+            if (item.name == GetPrefabName(PF_Plank))
+                UI.OnRemoveChild();
+
             var place = player.GetNewRoomPosition();
             var roomToPlace = Rooms[place];
 
@@ -393,12 +401,12 @@ public class LevelScript : MonoBehaviour
             itemScript.UseItem(this, roomToPlace);
         }
         // Silence the errors. Shhhh
-        catch (ArgumentOutOfRangeException e)
+        catch (ArgumentOutOfRangeException)
         {
             // If you're trying to use an item but you have no items
             return;
         }
-        catch (KeyNotFoundException e)
+        catch (KeyNotFoundException)
         {
             // If you're trying to place an item outside the map
             return;

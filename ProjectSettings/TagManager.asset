@@ -44,6 +44,9 @@ TagManager:
   - name: BG Elements
     uniqueID: 3215874065
     locked: 0
+  - name: Plank-Signs
+    uniqueID: 1133204363
+    locked: 0
   - name: Entities
     uniqueID: 1294135509
     locked: 0

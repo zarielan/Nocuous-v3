@@ -123,13 +123,10 @@ public class Player : MonoBehaviour
             GameObject newRoom = level.GetRooms()[next];
             foreach (Transform t in newRoom.transform)
             {
-                if (t.name == level.GetPrefabName(level.PF_Hole))
+                if (t.name == level.GetPrefabName(level.PF_Hole) && newRoom.transform.Find(level.GetPrefabName(level.PF_PlankBridge)) == null)
                     return;
             }
-
-            // If so, then the player moves.
-            newPosition = next;
-
+            
             // Do the door animation:
             // Horizontal:
             if (x != 0)
@@ -146,8 +143,11 @@ public class Player : MonoBehaviour
                 Door.SendMessage("Clockwise", y < 1);
             }
 
-            // Alert the level that the player has moved
-            level.OnTurn();
+            // Alert the level that the player has moved. Sending in the current position before moving
+            level.OnTurn(newPosition);
+
+            // If so, then the player moves.
+            newPosition = next;
         }
     }
 

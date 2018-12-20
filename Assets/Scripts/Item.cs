@@ -32,6 +32,15 @@ public class Item : MonoBehaviour
 
             // Decrease extinguisher use here TODO
         }
+        else if (name == lvl.GetPrefabName(lvl.PF_Plank))
+        {
+            Transform hole = inthisroom.transform.Find(lvl.GetPrefabName(lvl.PF_Hole));
+
+            if (hole != null)
+            {
+
+            }
+        }
     }
 
     public void SetRotating(bool rot)

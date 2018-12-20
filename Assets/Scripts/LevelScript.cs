@@ -415,4 +415,13 @@ public class LevelScript : MonoBehaviour
             return;
         }
     }
+
+    public void OnMouseClick(Vector3 mouse)
+    {
+        Vector3 world = Camera.ScreenToWorldPoint(mouse);
+        int roomX = Convert.ToInt32(world.x);
+        int roomY = Convert.ToInt32(world.y);
+
+        GameObject roomSelected = Rooms[new Vector3(roomX, roomY, 0)];
+    }
 }

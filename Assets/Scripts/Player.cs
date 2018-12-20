@@ -91,10 +91,14 @@ public class Player : MonoBehaviour
                     newRotation = Quaternion.Euler(0, 0, 0);
                 }
             }
-
             else if (Input.GetKeyDown(KeyCode.Return))
             {
                 level.OnItemUse();
+            }
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                level.OnMouseClick(Input.mousePosition);
             }
         }
 

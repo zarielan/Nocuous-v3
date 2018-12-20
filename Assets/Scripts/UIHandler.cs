@@ -119,7 +119,7 @@ public class UIHandler : MonoBehaviour
 
     public void FadeToBlack(float time, string endmsg)
     {
-        fader.transform.SetSiblingIndex(transform.childCount - 1);
+        fader.transform.SetSiblingIndex(transform.childCount);
         fader.canvasRenderer.SetAlpha(0f);
         fader.CrossFadeAlpha(1f, time, false);
 

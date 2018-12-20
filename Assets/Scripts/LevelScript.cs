@@ -58,6 +58,8 @@ public class LevelScript : MonoBehaviour
 
     void Start()
     {
+        print("Starting level!");
+
         Rooms = new Dictionary<Vector3, GameObject>();
 
         levelData = readFile(levelFile);
@@ -128,7 +130,7 @@ public class LevelScript : MonoBehaviour
     /*
      *  On each turn of the player, somethings can happen.
      */
-    public void OnTurn(Vector3 prev_playerPos)
+    public void OnTurn(Vector3 prev_playerPos, Vector3 newPos)
     {
         // 25% Chance of spreading gas or fire.
         if (UnityEngine.Random.Range(0, 4) == 1)
@@ -139,32 +141,6 @@ public class LevelScript : MonoBehaviour
         var plankBridge = Rooms[prev_playerPos].transform.Find(GetPrefabName(PF_PlankBridge));
         if (plankBridge != null)
             Destroy(plankBridge.gameObject);
-
-        // On Player Move to the next room
-        UpdatePlayerHealth();
-        
-        if (player.GetHealth() <= 0)
-            OnLevelExit("Aww you died!");
-    }
-
-    private void UpdatePlayerHealth()
-    {
-        GameObject roomEntered = Rooms[player.GetNewRoomPosition()];
-        print(player.GetNewRoomPosition());
-
-        if (roomEntered.transform.Find(GetPrefabName(PF_Gas)) != null)
-        {
-            var newHealth = player.GetHealth() - 1;
-            player.SetHealth(newHealth);
-            UI.SetHealthBar(newHealth);
-        }
-
-        if (roomEntered.transform.Find(GetPrefabName(PF_Fire)) != null)
-        {
-            var newHealth = 0;
-            player.SetHealth(newHealth);
-            UI.SetHealthBar(newHealth);
-        }
     }
 
     private void SpreadElements()
@@ -521,13 +497,27 @@ public class LevelScript : MonoBehaviour
                 influencePart = 0;
                 selection.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
                 SpreadElements();
-                UpdatePlayerHealth();
+                CheckHealth();
             }
         }
         catch (KeyNotFoundException)
         {
             return;
         }        
+    }
+
+    private void CheckHealth()
+    {
+        GameObject room = Rooms[player.GetNewPosition()];
+        if (room.transform.Find(GetPrefabName(PF_Gas)) != null)
+        {
+            player.SetHealth(player.GetHealth() - 1);
+        }
+    }
+
+    public void UpdateHealthBar(int health)
+    {
+        UI.SetHealthBar(health);
     }
 
     private void Explode(GameObject obj)

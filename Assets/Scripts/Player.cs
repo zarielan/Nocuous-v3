@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
 
         if (isPlaying)
         {
-            if (Input.GetKeyDown(KeyCode.RightArrow))
+            if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
             {
                 if (currentDirection == Direction.RIGHT)
                 {
@@ -56,7 +56,7 @@ public class Player : MonoBehaviour
                     newRotation = Quaternion.Euler(0, 0, 90);
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             {
                 if (currentDirection == Direction.LEFT)
                 {
@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
                     newRotation = Quaternion.Euler(0, 0, 270);
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
             {
                 if (currentDirection == Direction.UP)
                 {
@@ -80,7 +80,7 @@ public class Player : MonoBehaviour
                     newRotation = Quaternion.Euler(0, 0, 180);
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
+            else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
             {
                 if (currentDirection == Direction.DOWN)
                 {
@@ -109,6 +109,9 @@ public class Player : MonoBehaviour
         isMoving = transform.position != newPosition;
         transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * SPEED);
         transform.rotation = Quaternion.Slerp(transform.rotation, newRotation, Time.deltaTime * SPEED);
+
+        if (health <= 0 && isPlaying)
+            level.OnLevelExit("Aww you died!");
     }
     
     /*
@@ -149,7 +152,7 @@ public class Player : MonoBehaviour
             }
 
             // Alert the level that the player has moved. Sending in the current position before moving
-            level.OnTurn(newPosition);
+            level.OnTurn(newPosition, next);
 
             // If so, then the player moves.
             newPosition = next;
@@ -184,11 +187,26 @@ public class Player : MonoBehaviour
             // Start exiting the level
             level.OnLevelExit("You made it!");
         }
+        else if (collision.gameObject.name == level.GetPrefabName(level.PF_Gas))
+        {
+            print("Hit by gas. Decreasing health by 1 point");
+            SetHealth(health - 1);
+        }
+        else if (collision.gameObject.name == level.GetPrefabName(level.PF_Fire))
+        {
+            print("Hit by fire. You dead bro lmao");
+            SetHealth(0);
+        }
     }
 
     public void SetIsPlaying(bool playing)
     {
         isPlaying = playing;
+    }
+
+    public bool IsPlaying()
+    {
+        return isPlaying;
     }
 
     private void SetNewRoomPosition()
@@ -226,6 +244,12 @@ public class Player : MonoBehaviour
     public void SetHealth(int x)
     {
         health = x;
+        level.UpdateHealthBar(health);
+    }
+
+    public Vector3 GetNewPosition()
+    {
+        return newPosition;
     }
 
     public int GetHealth()

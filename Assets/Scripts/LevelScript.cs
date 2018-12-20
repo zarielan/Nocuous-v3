@@ -126,128 +126,7 @@ public class LevelScript : MonoBehaviour
         // 25% Chance of spreading gas or fire.
         if (UnityEngine.Random.Range(0, 4) == 1)
         {
-            // Hashset that will contain places we'll put gas on. To prevent duplicates.
-            var addGas = new HashSet<GameObject>();
-            // For fire
-            var addFire = new HashSet<GameObject>();
-
-            // Iterate through all rooms to find gases or fire
-            foreach (var r in Rooms)
-            {
-                if (r.Value.name == GetPrefabName(PF_ExitRoom))
-                    continue;
-
-                // Check for each room's children
-                Transform roomTransform = r.Value.transform;
-                foreach (Transform t in roomTransform)
-                {
-                    // If the room has gas in it
-                    if (t.name == GetPrefabName(PF_Gas))
-                    {
-                        // Find a neighbor.
-                        var possibleNeighbors = GetRoomNeighbors(r.Key);
-                        int index = UnityEngine.Random.Range(0, possibleNeighbors.Count);
-                        Vector3 next = possibleNeighbors[index];
-
-                        GameObject Room = Rooms[next];
-                        Transform roomChildren = Room.transform;
-                        bool hasGas = false;
-
-                        // Check if that neighbor has no gas in it
-                        foreach (Transform c in roomChildren)
-                        {
-                            if (c.name == GetPrefabName(PF_Gas))
-                            {
-                                hasGas = true;
-                                break;
-                            }
-                        }
-
-                        // If it doesn't, spread gas there!
-                        if (!hasGas)
-                            addGas.Add(Room);
-                    }
-                    // If the room has fire in it
-                    else if (t.name == GetPrefabName(PF_Fire))
-                    {
-                        // Find a neighbor.
-                        var possibleNeighbors = GetRoomNeighbors(r.Key);
-                        int index = UnityEngine.Random.Range(0, possibleNeighbors.Count);
-                        Vector3 next = possibleNeighbors[index];
-
-                        GameObject Room = Rooms[next];
-                        Transform roomChildren = Room.transform;
-                        bool hasFire = false;
-
-                        // Check if that neighbor has no fire in it
-                        foreach (Transform c in roomChildren)
-                        {
-                            if (c.name == GetPrefabName(PF_Fire))
-                            {
-                                hasFire = true;
-                                break;
-                            }
-                        }
-
-                        // If it doesn't, spread gas there!
-                        if (!hasFire)
-                            addFire.Add(Room);
-                    }
-                }
-            }
-
-            // Set gas to these rooms
-            addGas = new HashSet<GameObject>(addGas);
-            foreach (GameObject r in addGas)
-                CreateElementInRoom(PF_Gas, r);
-
-            // Set fire to these rooms
-            addFire = new HashSet<GameObject>(addFire);
-            foreach (GameObject r in addFire)
-                CreateElementInRoom(PF_Fire, r);
-
-            // If the room has two elements or more in it, when need to do something
-            foreach (var r in Rooms)
-            {
-                bool hasGas = false;
-                bool hasFire = false;
-                bool hasHole = false;
-
-                // Check for each room's children
-                Transform roomTransform = r.Value.transform;
-                foreach (Transform t in roomTransform)
-                {
-                    if (t.name == GetPrefabName(PF_Gas))
-                        hasGas = true;
-                    if (t.name == GetPrefabName(PF_Fire))
-                        hasFire = true;
-                    if (t.name == GetPrefabName(PF_Hole))
-                        hasHole = true;
-                }
-
-                // Gas and Fire
-                if (hasGas && hasFire && !hasHole)
-                {
-                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
-                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
-                    CreateElementInRoom(PF_Hole, r.Value);
-                    //TODO explode
-                }
-
-                // Hole and Fire
-                if (!hasGas && hasFire && hasHole)
-                {
-                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
-                }
-
-                // All
-                if (hasGas && hasFire && hasHole)
-                {
-                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
-                    Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
-                    //TODO explode
-                }
-            }
+            SpreadElements();
         }
 
         var plankBridge = Rooms[prev_playerPos].transform.Find(GetPrefabName(PF_PlankBridge));
@@ -273,6 +152,132 @@ public class LevelScript : MonoBehaviour
 
         if (player.GetHealth() <= 0)
             OnLevelExit("Aww you died!");
+    }
+
+    private void SpreadElements()
+    {
+        // Hashset that will contain places we'll put gas on. To prevent duplicates.
+        var addGas = new HashSet<GameObject>();
+        // For fire
+        var addFire = new HashSet<GameObject>();
+
+        // Iterate through all rooms to find gases or fire
+        foreach (var r in Rooms)
+        {
+            if (r.Value.name == GetPrefabName(PF_ExitRoom))
+                continue;
+
+            // Check for each room's children
+            Transform roomTransform = r.Value.transform;
+            foreach (Transform t in roomTransform)
+            {
+                // If the room has gas in it
+                if (t.name == GetPrefabName(PF_Gas))
+                {
+                    // Find a neighbor.
+                    var possibleNeighbors = GetRoomNeighbors(r.Key);
+                    int index = UnityEngine.Random.Range(0, possibleNeighbors.Count);
+                    Vector3 next = possibleNeighbors[index];
+
+                    GameObject Room = Rooms[next];
+                    Transform roomChildren = Room.transform;
+                    bool hasGas = false;
+
+                    // Check if that neighbor has no gas in it
+                    foreach (Transform c in roomChildren)
+                    {
+                        if (c.name == GetPrefabName(PF_Gas))
+                        {
+                            hasGas = true;
+                            break;
+                        }
+                    }
+
+                    // If it doesn't, spread gas there!
+                    if (!hasGas)
+                        addGas.Add(Room);
+                }
+                // If the room has fire in it
+                else if (t.name == GetPrefabName(PF_Fire))
+                {
+                    // Find a neighbor.
+                    var possibleNeighbors = GetRoomNeighbors(r.Key);
+                    int index = UnityEngine.Random.Range(0, possibleNeighbors.Count);
+                    Vector3 next = possibleNeighbors[index];
+
+                    GameObject Room = Rooms[next];
+                    Transform roomChildren = Room.transform;
+                    bool hasFire = false;
+
+                    // Check if that neighbor has no fire in it
+                    foreach (Transform c in roomChildren)
+                    {
+                        if (c.name == GetPrefabName(PF_Fire))
+                        {
+                            hasFire = true;
+                            break;
+                        }
+                    }
+
+                    // If it doesn't, spread gas there!
+                    if (!hasFire)
+                        addFire.Add(Room);
+                }
+            }
+        }
+
+        // Set gas to these rooms
+        addGas = new HashSet<GameObject>(addGas);
+        foreach (GameObject r in addGas)
+            CreateElementInRoom(PF_Gas, r);
+
+        // Set fire to these rooms
+        addFire = new HashSet<GameObject>(addFire);
+        foreach (GameObject r in addFire)
+            CreateElementInRoom(PF_Fire, r);
+
+        // If the room has two elements or more in it, when need to do something
+        foreach (var r in Rooms)
+        {
+            bool hasGas = false;
+            bool hasFire = false;
+            bool hasHole = false;
+
+            // Check for each room's children
+            Transform roomTransform = r.Value.transform;
+            foreach (Transform t in roomTransform)
+            {
+                if (t.name == GetPrefabName(PF_Gas))
+                    hasGas = true;
+                if (t.name == GetPrefabName(PF_Fire))
+                    hasFire = true;
+                if (t.name == GetPrefabName(PF_Hole))
+                    hasHole = true;
+            }
+
+            // Gas and Fire
+            if (hasGas && hasFire && !hasHole)
+            {
+                Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
+                Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
+                CreateElementInRoom(PF_Hole, r.Value);
+                //TODO explode
+            }
+
+            // Hole and Fire
+            if (!hasGas && hasFire && hasHole)
+            {
+                Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
+            }
+
+            // All
+            if (hasGas && hasFire && hasHole)
+            {
+                Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
+                Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
+                //TODO explode
+            }
+        }
     }
 
     private List<Vector3> GetRoomNeighbors(Vector3 Current)
@@ -496,6 +501,7 @@ public class LevelScript : MonoBehaviour
 
                 influencePart = 0;
                 selection.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+                SpreadElements();
             }
         }
         catch (KeyNotFoundException)

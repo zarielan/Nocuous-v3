@@ -37,6 +37,9 @@ public class LevelScript : MonoBehaviour
 
     public TextAsset levelFile;
 
+    public AudioClip sfx_explode;
+    public AudioClip sfx_hammer;
+
     /* Class variables */
     private string[] levelData;
     private int levelHeight = 0;
@@ -51,6 +54,7 @@ public class LevelScript : MonoBehaviour
     private GameObject selection;
     private int influencePart = 0;
     private Vector3 selectedToInfluence;
+    private AudioSource sfx_player;
 
     void Start()
     {
@@ -103,6 +107,8 @@ public class LevelScript : MonoBehaviour
 
         UI = UI_Canvas.GetComponent<UIHandler>();
         UI.FadeToGame(fadeTime);
+
+        sfx_player = GetComponent<AudioSource>();
     }
 
     private string[] readFile(TextAsset file)
@@ -135,7 +141,16 @@ public class LevelScript : MonoBehaviour
             Destroy(plankBridge.gameObject);
 
         // On Player Move to the next room
+        UpdatePlayerHealth();
+        
+        if (player.GetHealth() <= 0)
+            OnLevelExit("Aww you died!");
+    }
+
+    private void UpdatePlayerHealth()
+    {
         GameObject roomEntered = Rooms[player.GetNewRoomPosition()];
+        print(player.GetNewRoomPosition());
 
         if (roomEntered.transform.Find(GetPrefabName(PF_Gas)) != null)
         {
@@ -150,9 +165,6 @@ public class LevelScript : MonoBehaviour
             player.SetHealth(newHealth);
             UI.SetHealthBar(newHealth);
         }
-
-        if (player.GetHealth() <= 0)
-            OnLevelExit("Aww you died!");
     }
 
     private void SpreadElements()
@@ -262,7 +274,7 @@ public class LevelScript : MonoBehaviour
                 Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
                 Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
                 CreateElementInRoom(PF_Hole, r.Value);
-                Instantiate(PF_AnimExplode, r.Value.transform);
+                Explode(r.Value);
             }
 
             // Hole and Fire
@@ -276,7 +288,7 @@ public class LevelScript : MonoBehaviour
             {
                 Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
                 Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
-                Instantiate(PF_AnimExplode, r.Value.transform);
+                Explode(r.Value);
             }
         }
     }
@@ -430,6 +442,10 @@ public class LevelScript : MonoBehaviour
 
             if (allUsedUp)
             {
+                //Sfx
+                if (item.name == GetPrefabName(PF_Plank))
+                    sfx_player.PlayOneShot(sfx_hammer);
+
                 if (item.name == GetPrefabName(PF_Plank))
                     UI.OnRemoveChild();
             }
@@ -486,7 +502,7 @@ public class LevelScript : MonoBehaviour
                     }
                     else if (roomSelected.transform.Find(GetPrefabName(PF_Fire)) != null)
                     {
-                        Instantiate(PF_AnimExplode, roomSelected.transform);
+                        Explode(roomSelected);
 
                         // Remove the fire
                         Destroy(roomSelected.transform.Find(GetPrefabName(PF_Fire)).gameObject);
@@ -505,11 +521,18 @@ public class LevelScript : MonoBehaviour
                 influencePart = 0;
                 selection.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
                 SpreadElements();
+                UpdatePlayerHealth();
             }
         }
         catch (KeyNotFoundException)
         {
             return;
         }        
+    }
+
+    private void Explode(GameObject obj)
+    {
+        Instantiate(PF_AnimExplode, obj.transform);
+        sfx_player.PlayOneShot(sfx_explode);
     }
 }

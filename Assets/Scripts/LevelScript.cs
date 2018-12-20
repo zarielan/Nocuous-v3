@@ -30,6 +30,7 @@ public class LevelScript : MonoBehaviour
     public GameObject PF_ExitRoom;
     public GameObject PF_PlankBridge;
     public GameObject PF_Selection;
+    public GameObject PF_AnimExplode;
 
     public Camera PF_Camera;
     public Canvas UI_Canvas;
@@ -261,7 +262,7 @@ public class LevelScript : MonoBehaviour
                 Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
                 Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
                 CreateElementInRoom(PF_Hole, r.Value);
-                //TODO explode
+                Instantiate(PF_AnimExplode, r.Value.transform);
             }
 
             // Hole and Fire
@@ -275,7 +276,7 @@ public class LevelScript : MonoBehaviour
             {
                 Destroy(r.Value.transform.Find(GetPrefabName(PF_Gas)).gameObject);
                 Destroy(r.Value.transform.Find(GetPrefabName(PF_Fire)).gameObject);
-                //TODO explode
+                Instantiate(PF_AnimExplode, r.Value.transform);
             }
         }
     }
@@ -485,6 +486,8 @@ public class LevelScript : MonoBehaviour
                     }
                     else if (roomSelected.transform.Find(GetPrefabName(PF_Fire)) != null)
                     {
+                        Instantiate(PF_AnimExplode, roomSelected.transform);
+
                         // Remove the fire
                         Destroy(roomSelected.transform.Find(GetPrefabName(PF_Fire)).gameObject);
                         // Then put a hole there

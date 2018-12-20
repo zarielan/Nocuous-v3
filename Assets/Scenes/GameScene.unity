@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 1196955533}
   - component: {fileID: 1196955535}
   - component: {fileID: 1196955534}
+  - component: {fileID: 1196955536}
   m_Layer: 5
   m_Name: Fader
   m_TagString: Untagged
@@ -436,6 +437,24 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1196955532}
   m_CullTransparentMesh: 0
+--- !u!95 &1196955536
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1196955532}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2e96cc65ad6df4945bcb65ac2e680ca6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1286205681
 GameObject:
   m_ObjectHideFlags: 0
@@ -687,6 +706,8 @@ MonoBehaviour:
   PF_PlankBridge: {fileID: 1662580395692462, guid: 49d1a455ac7ee674d92a0b38a1894b40,
     type: 2}
   PF_Selection: {fileID: 1305864324804974, guid: e8e5e636d54a374449eea3f76842be1d,
+    type: 2}
+  PF_AnimExplode: {fileID: 1816636542263564, guid: 95b97bf5b02e7564d9fd03a70dbc6921,
     type: 2}
   PF_Camera: {fileID: 20133558330937034, guid: 81f2bc331f92a124d8b0f55e10751cf9, type: 2}
   UI_Canvas: {fileID: 571178157}

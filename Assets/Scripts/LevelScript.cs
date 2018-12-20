@@ -35,7 +35,7 @@ public class LevelScript : MonoBehaviour
     public Camera PF_Camera;
     public Canvas UI_Canvas;
 
-    public TextAsset levelFile;
+    private TextAsset levelFile;
 
     public AudioClip sfx_explode;
     public AudioClip sfx_hammer;
@@ -62,6 +62,7 @@ public class LevelScript : MonoBehaviour
 
         Rooms = new Dictionary<Vector3, GameObject>();
 
+        levelFile = Resources.Load("Level" + StaticClass.LEVEL_NUMBER) as TextAsset;
         levelData = readFile(levelFile);
 
         // Read the data from the map file and creates the rooms. 

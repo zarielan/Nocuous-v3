@@ -7,6 +7,7 @@ public class TitleScreen : MonoBehaviour
 {
     private void Update()
     {
+        StaticClass.LEVEL_NUMBER = 1;
         if (Input.GetKeyDown(KeyCode.Return))
             SceneManager.LoadScene("GameScene");
     }

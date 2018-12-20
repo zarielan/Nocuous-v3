@@ -27,6 +27,7 @@ public class Player : MonoBehaviour
 
     private bool isMoving = false;
     private bool isPlaying = true;
+    private int health = 2;
 
     void Start()
     {
@@ -181,7 +182,7 @@ public class Player : MonoBehaviour
         if (collision.gameObject.name == level.GetPrefabName(level.PF_ExitRoom))
         {
             // Start exiting the level
-            level.OnLevelExit();
+            level.OnLevelExit("You made it!");
         }
     }
 
@@ -220,5 +221,15 @@ public class Player : MonoBehaviour
     public Vector3 GetNewRoomPosition()
     {
         return nextRoomPosition;
+    }
+
+    public void SetHealth(int x)
+    {
+        health = x;
+    }
+
+    public int GetHealth()
+    {
+        return health;
     }
 }

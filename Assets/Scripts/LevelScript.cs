@@ -44,7 +44,7 @@ public class LevelScript : MonoBehaviour
     private Dictionary<Vector3, GameObject> Rooms;
     private Player player;
     private Camera Camera;
-    private float fadeTime = 0.5f;
+    private float fadeTime = 1f;
     private UIHandler UI;
 
     private GameObject selection;
@@ -252,7 +252,27 @@ public class LevelScript : MonoBehaviour
 
         var plankBridge = Rooms[prev_playerPos].transform.Find(GetPrefabName(PF_PlankBridge));
         if (plankBridge != null)
-            Destroy(plankBridge.gameObject);            
+            Destroy(plankBridge.gameObject);
+
+        // On Player Move to the next room
+        GameObject roomEntered = Rooms[player.GetNewRoomPosition()];
+
+        if (roomEntered.transform.Find(GetPrefabName(PF_Gas)) != null)
+        {
+            var newHealth = player.GetHealth() - 1;
+            player.SetHealth(newHealth);
+            UI.SetHealthBar(newHealth);
+        }
+
+        if (roomEntered.transform.Find(GetPrefabName(PF_Fire)) != null)
+        {
+            var newHealth = 0;
+            player.SetHealth(newHealth);
+            UI.SetHealthBar(newHealth);
+        }
+
+        if (player.GetHealth() <= 0)
+            OnLevelExit("Aww you died!");
     }
 
     private List<Vector3> GetRoomNeighbors(Vector3 Current)
@@ -361,10 +381,10 @@ public class LevelScript : MonoBehaviour
     /*
      *  Called when it's time to leave the level
      */
-    public void OnLevelExit()
+    public void OnLevelExit(string msg)
     {
         // Start fading out
-        UI.FadeToBlack(fadeTime);
+        UI.FadeToBlack(fadeTime, msg);
 
         // Stop accepting inputs
         player.SetIsPlaying(false);

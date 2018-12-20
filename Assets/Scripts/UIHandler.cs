@@ -18,6 +18,8 @@ public class UIHandler : MonoBehaviour
     private bool acceptingInputs;
     private int selectedItem = 0;
     private Vector3 ghostItemPosition;
+    private GameObject healthBar;
+    private GameObject exitMessage;
 
     private void Start()
     {
@@ -30,6 +32,10 @@ public class UIHandler : MonoBehaviour
 
         itemselect = Instantiate(PF_ItemSelect, transform);
         itemselect.GetComponent<Image>().canvasRenderer.SetAlpha(0f);
+
+        healthBar = transform.Find("HealthBar").gameObject;
+        exitMessage = transform.Find("ExitMessage").gameObject;
+        exitMessage.GetComponent<Text>().canvasRenderer.SetAlpha(0f);
     }
 
     // When an item has been added.
@@ -111,11 +117,15 @@ public class UIHandler : MonoBehaviour
         itemselect.transform.position = children[index].transform.position;
     }
 
-    public void FadeToBlack(float time)
+    public void FadeToBlack(float time, string endmsg)
     {
-        fader.transform.SetAsLastSibling();
+        fader.transform.SetSiblingIndex(transform.childCount - 1);
         fader.canvasRenderer.SetAlpha(0f);
         fader.CrossFadeAlpha(1f, time, false);
+
+        exitMessage.GetComponent<Text>().text = endmsg;
+        exitMessage.GetComponent<Text>().canvasRenderer.SetAlpha(1f);
+        exitMessage.transform.SetSiblingIndex(transform.childCount);
     }
 
     public void FadeToGame(float time)
@@ -143,7 +153,7 @@ public class UIHandler : MonoBehaviour
         var x = selectedItem;
         while (x >= children.Count)
         {
-            x--;            
+            x--;
         }
 
         if (x < 0)
@@ -170,5 +180,10 @@ public class UIHandler : MonoBehaviour
     public void SetGhostItemPosition(Vector3 v)
     {
         ghostItemPosition = v;
+    }
+
+    public void SetHealthBar(int playerHealth)
+    {
+        healthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(playerHealth * 100, 10);
     }
 }

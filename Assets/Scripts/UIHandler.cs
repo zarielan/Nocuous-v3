@@ -153,7 +153,7 @@ public class UIHandler : MonoBehaviour
         }
 
         for (int i = 0; i < children.Count; i++)
-            children[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(-50 + 100 * i, -50);
+            children[i].GetComponent<RectTransform>().anchoredPosition = new Vector2(50 + 100 * i, -50);
 
         Destroy(currentItem);
         Destroy(currentGhost);
